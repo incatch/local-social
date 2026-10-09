@@ -1,4 +1,6 @@
-FROM node:22-alpine
+# The official Node.js image, from Amazon's copy of Docker Hub's library
+# (Docker Hub limits how often build machines may download from it).
+FROM public.ecr.aws/docker/library/node:22-alpine
 
 WORKDIR /app
 
