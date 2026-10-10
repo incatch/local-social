@@ -472,3 +472,35 @@ ul.feedback-list { list-style: none; padding: 0; margin: 0; }
 .segmented input:checked + span { background: var(--ink); color: #fff; }
 .segmented input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
 .push-card [hidden] { display: none !important; }
+
+/* ── Pull Up and Squads ── */
+.pullup h2 { margin-bottom: 8px; }
+.pullup-faces { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; scrollbar-width: none; }
+.pullup-face { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 64px; color: var(--ink); text-decoration: none; font-size: 12px; font-weight: 700; }
+.pullup-face img, .pullup-face .avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
+.pullup-face span { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.squads-link { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: 18px; padding: 12px 14px; margin-bottom: 14px; color: var(--ink); text-decoration: none; box-shadow: var(--shadow); }
+.squads-link > span.grow { display: flex; flex-direction: column; }
+.squad-emoji { font-size: 26px; width: 44px; height: 44px; display: grid; place-items: center; background: var(--accent-soft); border-radius: 14px; flex: none; }
+ul.squad-list { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 10px; }
+ul.squad-list a { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: 18px; padding: 12px 14px; color: var(--ink); text-decoration: none; box-shadow: var(--shadow); }
+ul.squad-list .grow { display: flex; flex-direction: column; }
+.streak { font-weight: 800; font-size: 14px; color: var(--accent); white-space: nowrap; }
+.streak.hot { color: #e8590c; }
+.streak.cold { color: var(--muted); font-weight: 600; font-size: 13px; }
+.emoji-pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
+.emoji-pick input { position: absolute; opacity: 0; pointer-events: none; }
+.emoji-pick span { display: grid; place-items: center; width: 42px; height: 42px; font-size: 22px; border-radius: 12px; background: #e9e8f4; cursor: pointer; }
+.emoji-pick input:checked + span { background: var(--accent-soft); outline: 2px solid var(--accent); }
+.streak-card { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, #fff3e3, #ffe0c2); }
+.streak-card.none { background: var(--card); }
+.streak-big { font-size: 34px; display: flex; flex-direction: column; align-items: center; line-height: 1; min-width: 64px; }
+.streak-big b { font-size: 30px; color: #e8590c; }
+.streak-card p { margin: 4px 0 0; }
+ul.squad-messages { list-style: none; padding: 0; margin: 0 0 10px; max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+ul.squad-messages li { align-self: flex-start; max-width: 80%; background: #eeedf7; border-radius: 16px 16px 16px 4px; padding: 7px 12px; display: flex; flex-direction: column; }
+ul.squad-messages li.mine { align-self: flex-end; background: var(--brand); color: #fff; border-radius: 16px 16px 4px 16px; }
+ul.squad-messages li.empty { align-self: center; background: none; }
+ul.squad-messages .who { font-size: 11px; font-weight: 800; opacity: 0.75; }
+ul.squad-messages .when { font-size: 10px; opacity: 0.6; }
+ul.squad-messages .text { white-space: pre-wrap; overflow-wrap: anywhere; }

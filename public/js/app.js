@@ -489,6 +489,52 @@ if (pushCardEl) {
   });
 }
 
+// Squad chat: send without reloading, and check for new messages every few seconds.
+const squadChat = document.querySelector("[data-squad-chat]");
+if (squadChat) {
+  const id = squadChat.dataset.squadChat;
+  const lastId = () => Number([...squadChat.querySelectorAll("li[data-id]")].pop()?.dataset.id || 0);
+  const add = (m) => {
+    if (squadChat.querySelector(`li[data-id="${m.id}"]`)) return;
+    squadChat.querySelector(".empty")?.remove();
+    const li = document.createElement("li");
+    li.dataset.id = m.id;
+    if (m.mine) li.className = "mine";
+    for (const [cls, text] of [["who", m.name], ["text", m.body], ["when", "just now"]]) {
+      const span = document.createElement("span");
+      span.className = cls;
+      span.textContent = text;
+      li.append(span);
+    }
+    squadChat.append(li);
+    squadChat.scrollTop = squadChat.scrollHeight;
+  };
+  const check = async () => {
+    try {
+      const res = await fetch(`/squads/${id}/messages?after=${lastId()}`);
+      if (res.ok) (await res.json()).forEach(add);
+    } catch {
+      // Try again next time.
+    }
+  };
+  squadChat.scrollTop = squadChat.scrollHeight;
+  setInterval(() => document.visibilityState === "visible" && check(), 4000);
+  const form = document.querySelector("[data-squad-say]");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const box = form.elements.body;
+    if (!box.value.trim()) return;
+    try {
+      const res = await fetch(form.action, { method: "POST", body: new URLSearchParams(new FormData(form)), headers: { accept: "application/json" } });
+      if (!res.ok) throw new Error();
+      box.value = "";
+      await check();
+    } catch {
+      form.submit();
+    }
+  });
+}
+
 // Finding people: results update as you type.
 const peopleSearch = document.querySelector("[data-people-search]");
 if (peopleSearch) {

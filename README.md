@@ -145,6 +145,21 @@ Admin → New features sets who gets Pull Up, Squads, Drops, Where It's At
 and video/Moment Reels (`lib/features.js`). They start as 18+ only; check
 with `featureOn(settings, key, user)` wherever one shows up.
 
+## Pull Up and Squads
+
+- **Pull Up** (posts with a place, for a day; plans until they end): tap
+  🙋 Pull up ("on my way", the poster hears about it), then "I'm here 👋"
+  once you're within about a mile (checked once, never tracked), and add
+  a quick selfie (screened like any photo) to the post's Pull Up wall.
+- **Squads** (`/squads`, from Messages and your profile): up to 8 friends
+  who follow each other. A squad chat (messages go after 7 days) and a
+  weekly 🔥 streak that only grows when the squad does something real
+  together that week (Monday to Sunday, site time): posts from the same
+  spot within 2 hours, the same plan, pulling up together or to a
+  squadmate's post, or the same Moment. Everyone hears when the streak
+  grows, and on the weekend if it's about to end. Rules in
+  `lib/irl-store.js`.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC
