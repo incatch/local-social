@@ -82,3 +82,8 @@ test("invite cards: every member has one, with a QR code; it brings people in", 
   await sam.get("/invite");
   assert.match(sam.last.body, /Invites are closed/);
 });
+
+test("the recap page never names other apps", async () => {
+  const src = require("fs").readFileSync(require("path").join(__dirname, "../lib/growth-views.js"), "utf8");
+  assert.doesNotMatch(src, /Instagram|Snapchat|TikTok/);
+});
