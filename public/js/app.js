@@ -166,6 +166,10 @@ if (newPost) {
           // Send the original; the server shrinks it.
         }
         data.append("photos", blob, `photo${i + 1}.jpg`);
+        // Shrinking drops the camera's record of when and where it was taken
+        // (and any "made with AI" label), so send the start of the original
+        // too; the server reads those and throws them away.
+        if (blob !== file) data.append(`head${i}`, file.slice(0, 512 * 1024), `head${i}`);
       }
       say("Sharing…");
       const res = await fetch(newPost.action, { method: "POST", body: data, headers: { accept: "application/json" } });

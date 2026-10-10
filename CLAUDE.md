@@ -26,4 +26,5 @@
   can_interact (blocks + adults/teens never mix), via `canInteract` in
   safety-store.js. Use it for anything new that shows people or content;
   never write a separate check. Teen rules are settings (Admin → Teen mode).
-
+- The camera's own time and GPS (from the original file) are only compared
+  for the "Taken here" badge, never stored or logged (`lib/provenance.js`).
