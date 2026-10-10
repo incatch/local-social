@@ -16,6 +16,7 @@ test("signed out: the welcome page, and everything else asks you to sign in", as
   assert.match(res.body, /<title>Radius<\/title>/);
   assert.match(res.body, /Your world\. Happening now\./);
   assert.match(res.body, /Radius introduces you to the people around you/);
+  assert.doesNotMatch(res.body, /Instagram/);
   assert.match(res.body, /invite-only beta/);
   res = await b.get("/settings");
   assert.equal(res.location, "/sign-in");
