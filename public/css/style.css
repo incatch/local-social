@@ -466,11 +466,11 @@ ul.feedback-list { list-style: none; padding: 0; margin: 0; }
 .push-buttons { gap: 8px; flex-wrap: wrap; align-items: center; }
 .ios-tip { background: var(--accent-soft); border-radius: 14px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
 .share-glyph { display: inline-block; border: 1.5px solid currentColor; border-radius: 5px; padding: 0 4px; font-size: 12px; }
-.segmented { display: inline-flex; background: #e9e8f4; border-radius: 999px; padding: 3px; gap: 2px; }
-.segmented input { position: absolute; opacity: 0; pointer-events: none; }
-.segmented span { display: inline-block; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 14px; color: var(--muted); cursor: pointer; }
-.segmented input:checked + span { background: var(--ink); color: #fff; }
-.segmented input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
+.audience-pick { display: inline-flex; background: #e9e8f4; border-radius: 999px; padding: 3px; gap: 2px; }
+.audience-pick input { position: absolute; opacity: 0; pointer-events: none; }
+.audience-pick span { display: inline-block; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 14px; color: var(--muted); cursor: pointer; }
+.audience-pick input:checked + span { background: var(--ink); color: #fff; }
+.audience-pick input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
 .push-card [hidden] { display: none !important; }
 
 /* ── Pull Up and Squads ── */
