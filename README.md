@@ -42,6 +42,17 @@ ever is. Live at https://social.plopza.com (invite-only beta).
    Microsoft PhotoDNA or Thorn Safer, which need an application) and have a
    lawyer review the terms, privacy policy and NCMEC reporting process.
 
+## No politics on Nearby
+
+Posts that look political stay off the Nearby feed (followers still see
+them on the profile and in Following; the poster is told). A post counts as
+political if its caption or the text in its photos (read by Rekognition)
+uses a word from the list, or its photos show a political figure
+(recognised by Rekognition, then checked on Wikidata: politician, political
+office or party member; looked up once per person). Admin → Nearby rules:
+turn it on/off, edit the words and extra names (saving re-checks the last
+30 days), and "Show on Nearby anyway" for mistakes.
+
 ## Teen mode (off until the owner turns it on)
 
 Admin → Teen mode lets 13–17-year-olds join, in a world of their own:
