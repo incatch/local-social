@@ -244,3 +244,10 @@ button.snap-chip.new { background: var(--accent); color: var(--ink); }
 .activity .grow a { color: var(--ink); text-decoration: none; }
 .activity .thumb img { width: 46px; height: 46px; object-fit: cover; border-radius: 12px; display: block; }
 .activity form button { margin: 0; }
+
+/* "Looks like you've moved" card, just above the dock. */
+.moved { position: fixed; z-index: 6; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom)); width: min(420px, calc(100% - 24px)); display: flex; align-items: center; gap: 10px; background: #fff; color: var(--ink); border-radius: 18px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(28, 27, 51, 0.2); font-size: 14px; font-weight: 600; }
+.moved .ic, .moved svg { color: var(--brand); flex: none; }
+.moved span { flex: 1; }
+.moved button { margin: 0; }
+.moved button.link { margin: 0; text-decoration: none; }
