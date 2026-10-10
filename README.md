@@ -93,6 +93,16 @@ Admin → Nearby rules.
   you to Radius · Springfield · 31 people nearby"), shared as a link or a
   picture; each brings in up to 5 people (Admin → Nearby rules; 0 = off).
 
+## Local badges
+
+Earned by being real and out in town, never by follower counts: 🌱 Founding
+member (first 100), 📍 Local (5 "Taken here" photos), ⭐ Regular (7 days in a
+month), 🌅 Early bird, 🌙 Night owl, 🧭 Explorer (5 towns), 🎉 In the moment
+(3 Moments), 🤝 Good neighbor (3 thanked answers), 🔥 Organizer (a plan 3
+people join), 🌊 Ripple maker. Shown on profiles; /badges explains them;
+an Activity note when one is earned. Rules in `lib/badges.js`; switch in
+Admin → Nearby rules.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC

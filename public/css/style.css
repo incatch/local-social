@@ -406,3 +406,14 @@ li.off-nearby form, li.off-nearby button { margin: 0; }
 .town-picker summary span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .town-panel { left: 0; right: 0; width: auto; }
 .mono-wrap { word-break: break-all; }
+
+/* ── Badges ── */
+.badge-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 12px 0 0; text-decoration: none; }
+.badge-chip { background: var(--accent-soft); color: #8a5310; border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 700; }
+.badge-list { list-style: none; padding: 6px; margin: 0; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+.badge-list li { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; opacity: 0.55; }
+.badge-list li.earned { opacity: 1; background: var(--accent-soft); }
+.badge-list li > div { flex: 1; }
+.badge-emoji { font-size: 30px; width: 44px; text-align: center; filter: grayscale(1); }
+.badge-list li.earned .badge-emoji { filter: none; }
+.earned-mark { color: var(--good); }
