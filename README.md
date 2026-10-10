@@ -53,6 +53,20 @@ office or party member; looked up once per person). Admin → Nearby rules:
 turn it on/off, edit the words and extra names (saving re-checks the last
 30 days), and "Show on Nearby anyway" for mistakes.
 
+## Real photos on Nearby
+
+Photos that say they were made with AI (content credentials / IPTC
+"trainedAlgorithmicMedia", or an image generator's own label) stay off
+Nearby; followers still see them, and the poster is told. Photos whose
+camera record says they were taken recently, close to where they were
+posted, get a "Taken here" badge. The browser sends the start of each
+original file (shrinking drops this data); the server reads it and throws
+it away (`lib/provenance.js`). "Fake or AI-made photo" is a report reason;
+the owner can keep a reported post up but off Nearby. Admin → Nearby rules
+has the switches, the badge's time and distance, and "Show on Nearby
+anyway". A paid AI-image detector (Sightengine, Hive) can be added later
+for images with no label.
+
 ## Teen mode (off until the owner turns it on)
 
 Admin → Teen mode lets 13–17-year-olds join, in a world of their own:

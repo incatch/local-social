@@ -282,3 +282,4 @@ button.legal { background: #7a1f1f; }
 .legal-note ol { padding-left: 20px; }
 li.off-nearby img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; }
 li.off-nearby form, li.off-nearby button { margin: 0; }
+.taken { position: absolute; right: 10px; top: 10px; display: inline-flex; align-items: center; gap: 3px; background: rgba(21, 128, 61, 0.85); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 10px 5px 8px; border-radius: 999px; }
