@@ -1,0 +1,3 @@
+node_modules/
+infra/cdk.out/
+media-files/

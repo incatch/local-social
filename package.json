@@ -1,0 +1,22 @@
+{
+  "name": "local-social",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local, Instagram-style social site: public profiles, a feed of posts near you, and Snapchat-style messages",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test --test-concurrency=1 \"test/*.test.js\""
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1149.0",
+    "@aws-sdk/client-sesv2": "^3.1148.0",
+    "all-the-cities": "^3.1.0",
+    "busboy": "^1.6.0",
+    "pg": "^8.23.1",
+    "sharp": "^0.35.5"
+  }
+}
