@@ -280,3 +280,5 @@ ul.blocked form, ul.blocked button { margin: 0; }
 .mod-actions button { margin: 0; }
 button.legal { background: #7a1f1f; }
 .legal-note ol { padding-left: 20px; }
+li.off-nearby img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; }
+li.off-nearby form, li.off-nearby button { margin: 0; }

@@ -32,7 +32,24 @@ const testScreener = {
     if (b > 200 && r < 60 && g < 60) return { action: "hold", labels: [{ name: "Graphic Violence", parent: "Violence", confidence: 88 }] };
     return { action: "allow", labels: [] };
   },
+  // Pretend photo reading: yellow photos say "VOTE BIDEN 2028"; magenta ones
+  // show a (pretend) senator.
+  async inspect(image) {
+    const { channels } = await sharp(image).stats();
+    const [r, g, b] = channels.map((c) => c.mean);
+    if (r > 200 && g > 200 && b < 60) return { text: "VOTE BIDEN 2028", people: [] };
+    if (r > 200 && b > 200 && g < 60) return { text: "", people: [{ name: "Jane Senator", wikidataId: "Q999001" }] };
+    return { text: "", people: [] };
+  },
 };
+// Pretend Wikidata: Q999001 is a politician, anyone else isn't.
+const testFetch = async (url) => ({
+  ok: true,
+  json: async () => {
+    const id = url.match(/(Q\d+)\.json/)[1];
+    return { entities: { [id]: { claims: id === "Q999001" ? { P106: [{ mainsnak: { datavalue: { value: { id: "Q82955" } } } }] } : {} } } };
+  },
+});
 
 // A few real towns, so the tests don't load all 135,000.
 const TOWNS = [
@@ -60,6 +77,7 @@ async function startApp() {
     secret: SECRET,
     siteUrl: SITE_URL,
     screener: testScreener,
+    fetch: testFetch,
     log: quiet,
   });
   const server = http.createServer(handler);
