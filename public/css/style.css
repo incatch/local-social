@@ -365,3 +365,44 @@ li.off-nearby form, li.off-nearby button { margin: 0; }
 .replies li { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .replies li.thanked { background: var(--accent-soft); border-radius: 12px; padding: 10px; }
 .replies a { color: var(--ink); text-decoration: none; }
+
+/* ── Growth: town picker, visiting, recap, invite card ── */
+.town-picker { position: relative; }
+.town-picker summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin: 0; padding: 6px 12px; font-size: 13px; font-weight: 700; border-radius: 999px; background: #fff; color: var(--brand); border: 1.5px solid var(--line); }
+.town-picker summary::-webkit-details-marker { display: none; }
+.town-picker[open] summary { border-color: var(--brand); background: var(--brand-soft); }
+.town-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 6; width: min(340px, calc(100vw - 32px)); background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 12px 34px rgba(28, 27, 51, 0.22); }
+.town-panel form { margin: 0; }
+.town-panel button { margin-top: 0; }
+.town-search { display: flex; gap: 6px; margin-top: 10px !important; }
+.town-search input { flex: 1; padding: 8px 12px; }
+.town-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; align-items: center; }
+.town-chips .send-chip { padding: 5px 11px; font-size: 13px; }
+.visit-banner { display: flex; align-items: center; gap: 8px; background: var(--accent-soft); color: #7a4a10; border-radius: 16px; padding: 10px 12px; margin-bottom: 14px; font-size: 14px; }
+.visit-banner span { flex: 1; }
+.visit-banner a { font-weight: 800; color: #b5650f; white-space: nowrap; }
+.recap-card { display: flex; align-items: center; gap: 12px; background: linear-gradient(120deg, var(--brand), #8a5be0); color: #fff; border-radius: 18px; padding: 12px 14px; margin-bottom: 14px; text-decoration: none; box-shadow: 0 8px 22px rgba(91, 95, 224, 0.35); }
+.recap-card > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; }
+.recap-card .muted { color: rgba(255, 255, 255, 0.8); }
+.recap-spark { font-size: 26px; }
+.recap-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 16px; }
+.recap-preview a:first-child { grid-column: span 3; aspect-ratio: 16 / 10; }
+.recap-preview a { aspect-ratio: 1; border-radius: 14px; overflow: hidden; display: block; }
+.recap-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.invite-card { text-align: center; color: #fff; background: linear-gradient(150deg, var(--brand), var(--ink)); border-radius: 26px; padding: 26px 20px 18px; margin-bottom: 14px; }
+.invite-card .rings-mark span { border-color: #fff; }
+.invite-card .rings-mark span:nth-child(1) { background: #fff; }
+.invite-from { margin: 14px 0 0; opacity: 0.8; }
+.invite-brand { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; margin: 0; line-height: 1.1; }
+.invite-where { font-weight: 700; margin: 4px 0 14px; }
+.invite-qr { width: 170px; height: 170px; margin: 0 auto 10px; background: #fff; border-radius: 18px; padding: 10px; }
+.invite-qr svg { width: 100%; height: 100%; display: block; }
+.invite-card .muted { color: rgba(255, 255, 255, 0.75); }
+.feed-bar { position: relative; flex-wrap: nowrap; }
+.feed-bar .rings { gap: 4px; }
+.feed-bar button.ring { padding: 6px 9px; font-size: 12.5px; }
+.town-picker { position: static; }
+.town-picker summary { padding: 6px 10px; font-size: 12.5px; max-width: 130px; }
+.town-picker summary span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.town-panel { left: 0; right: 0; width: auto; }
+.mono-wrap { word-break: break-all; }
