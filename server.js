@@ -10,6 +10,7 @@ const { createS3Store, createDirStore } = require("./lib/media");
 const { createPlaces } = require("./lib/places");
 const { createAlbAuth } = require("./lib/alb-auth");
 const { createApp } = require("./lib/app");
+const { createRekognitionScreener, allowAll } = require("./lib/screening");
 
 async function main(env = process.env) {
   const region = env.AWS_REGION || "us-east-2";
@@ -32,6 +33,8 @@ async function main(env = process.env) {
     sessions: createSessions(env.SESSION_SECRET),
     sendEmail: env.EMAIL_FROM ? createSesSender({ region, from: env.EMAIL_FROM }) : consoleSender(),
     media,
+    // Photo screening runs on AWS; on your own computer everything's allowed.
+    screener: env.MEDIA_BUCKET && env.SCREENING !== "off" ? createRekognitionScreener({ region }) : allowAll,
     places: createPlaces(),
     auth,
     admins,
@@ -51,6 +54,7 @@ async function main(env = process.env) {
   const purge = async () => {
     try {
       for (const key of await store.purgeMessages()) await media.remove(key).catch(() => {});
+      for (const key of await store.purgeSnapWindows()) await media.remove(key).catch(() => {});
     } catch (err) {
       console.error("purging messages failed", err);
     }

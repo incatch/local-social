@@ -4,7 +4,7 @@
 
 Instagram shows you people you know. Radius introduces you to the people
 around you: Instagram-style posts and a feed of what's happening near you,
-with Snapchat-style messages. Every profile is public; nobody's exact location
+with disappearing messages and view-once photos. Every profile is public; nobody's exact location
 ever is. Live at https://social.plopza.com (invite-only beta).
 
 ## Being built in four parts
@@ -18,19 +18,29 @@ ever is. Live at https://social.plopza.com (invite-only beta).
    and a Following feed; profile grids. Photos are shrunk in the browser
    before uploading, then re-encoded on the server (full size and a square
    thumbnail).
-3. **Messages and snaps** (done): one-to-one chats from a profile's Message
+3. **Messages and view-once photos** (done): one-to-one chats from a profile's Message
    button. A first message to someone who doesn't follow you is a message
-   request (up to 3 texts, no snaps, until they accept or reply; they can
-   delete it). Snaps open once and the photo is deleted as it's shown. Read
+   request (up to 3 texts, no photos, until they accept or reply; they can
+   delete it). View-once photos open once and the photo is deleted as it's shown. Read
    messages disappear 24 hours after they're read unless both people keep
    the chat; unread ones after 30 days. Unsend, "Seen", new messages appear
    without reloading. Activity page for likes, comments, follows and
    @mentions, with badges on the bottom bar. The app icon and "Add to Home
    Screen" support.
-4. **Safety**: report and block, automatic photo screening, the admin
-   moderation queue, and the moderated-out store (labelled, for training a
-   moderation model later; anything involving minors goes to legal hold, never
-   training).
+4. **Safety** (done): report posts, comments, messages, view-once photos and people
+   (private; posts reported by 3 people, or once for anything involving a
+   minor, are hidden until reviewed); block (no profiles, posts, comments or
+   messages either way); every photo screened by Amazon Rekognition before
+   anyone sees it (explicit: refused; borderline: held for review); the
+   Admin → Moderation queue (keep, remove, ban, legal hold) with email
+   alerts; Admin → Removed, the moderated-out store (labels, report reasons
+   and decisions, for training a moderation model later). Anything involving
+   a minor goes to legal hold: locked away, never shown or used for
+   training, account banned, and the owner reports it to NCMEC.
+
+   **Before opening to the public:** add an abuse-image hash check (e.g.
+   Microsoft PhotoDNA or Thorn Safer, which need an application) and have a
+   lawyer review the terms, privacy policy and NCMEC reporting process.
 
 ## Privacy rules the code keeps
 

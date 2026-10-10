@@ -224,7 +224,7 @@ if (snapForm) {
   input.addEventListener("change", async () => {
     const file = input.files[0];
     if (!file) return;
-    say("Sending snap…");
+    say("Sending photo…");
     try {
       let blob = file;
       try {
@@ -233,7 +233,7 @@ if (snapForm) {
         // Send the original; the server shrinks it.
       }
       const data = new FormData();
-      data.append("photo", blob, "snap.jpg");
+      data.append("photo", blob, "photo.jpg");
       const res = await fetch(snapForm.action, { method: "POST", body: data, headers: { accept: "application/json" } });
       const out = await res.json().catch(() => ({ error: "Something went wrong. Please try again." }));
       if (!res.ok) throw new Error(out.error);

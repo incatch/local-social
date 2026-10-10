@@ -190,6 +190,8 @@ export class LocalSocialStack extends cdk.Stack {
     media.grantReadWrite(task.taskRole);
     media.grantDelete(task.taskRole);
     // Emails go out only ever from social@<domain>.
+    // Photo screening (Amazon Rekognition's moderation check).
+    task.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({ actions: ["rekognition:DetectModerationLabels"], resources: ["*"] }));
     task.taskRole.addToPrincipalPolicy(
       new iam.PolicyStatement({
         actions: ["ses:SendEmail"],

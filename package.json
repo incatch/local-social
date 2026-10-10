@@ -12,6 +12,7 @@
     "node": ">=22"
   },
   "dependencies": {
+    "@aws-sdk/client-rekognition": "^3.1149.0",
     "@aws-sdk/client-s3": "^3.1149.0",
     "@aws-sdk/client-sesv2": "^3.1148.0",
     "all-the-cities": "^3.1.0",
