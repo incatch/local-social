@@ -37,12 +37,6 @@ document.addEventListener("submit", (event) => {
   );
 });
 
-// Selects that apply as soon as they change (the Nearby distance).
-document.addEventListener("change", (event) => {
-  const form = event.target.closest("form[data-autosubmit]");
-  if (form) form.submit();
-});
-
 // Likes without reloading the page.
 document.addEventListener("submit", async (event) => {
   const form = event.target;
@@ -53,7 +47,7 @@ document.addEventListener("submit", async (event) => {
     if (!res.ok) throw new Error();
     const { liked, count } = await res.json();
     const button = form.querySelector("button");
-    button.textContent = liked ? "♥" : "♡";
+    button.querySelector("svg").setAttribute("fill", liked ? "currentColor" : "none");
     button.classList.toggle("liked", liked);
     button.setAttribute("aria-pressed", String(liked));
     form.querySelector("[data-like-count]").textContent = count;
@@ -64,7 +58,7 @@ document.addEventListener("submit", async (event) => {
 
 // Carousels: light up the dot for the photo in view.
 for (const carousel of document.querySelectorAll("[data-carousel]")) {
-  const dots = carousel.nextElementSibling?.matches(".dots") ? [...carousel.nextElementSibling.children] : [];
+  const dots = [...(carousel.parentElement.querySelector(".dots")?.children || [])];
   const update = () => {
     const i = Math.round(carousel.scrollLeft / carousel.clientWidth);
     dots.forEach((d, j) => d.classList.toggle("on", i === j));
@@ -89,26 +83,64 @@ async function shrink(file) {
 
 const newPost = document.querySelector("[data-new-post]");
 if (newPost) {
+  const MAX = 10;
   const input = newPost.elements.photos;
-  const previews = newPost.querySelector("[data-previews]");
+  const picker = newPost.querySelector("[data-picker]");
+  const tiles = newPost.querySelector("[data-previews]");
+  const addLabel = newPost.querySelector("[data-add-label]");
   const status = newPost.querySelector("[data-status]");
   const say = (text) => {
     status.textContent = text;
     status.hidden = !text;
   };
-  input.addEventListener("change", () => {
-    previews.replaceChildren(
-      ...[...input.files].slice(0, 10).map((f) => {
+  // The photos picked so far: each pick adds to them, and each can be removed.
+  let chosen = [];
+  input.required = false;
+  const show = () => {
+    tiles.replaceChildren(
+      ...chosen.map((file, i) => {
+        const tile = document.createElement("div");
+        tile.className = "tile";
         const img = document.createElement("img");
-        img.src = URL.createObjectURL(f);
-        img.alt = "";
-        return img;
+        img.src = file.preview;
+        img.alt = `Photo ${i + 1}`;
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.setAttribute("aria-label", `Remove photo ${i + 1}`);
+        remove.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg>';
+        remove.addEventListener("click", () => {
+          URL.revokeObjectURL(file.preview);
+          chosen.splice(i, 1);
+          show();
+        });
+        tile.append(img, remove);
+        if (i === 0 && chosen.length > 1) {
+          const first = document.createElement("span");
+          first.className = "first";
+          first.textContent = "Cover";
+          tile.append(first);
+        }
+        return tile;
       }),
     );
-    if (input.files.length > 10) say("Only the first 10 photos will be shared.");
+    picker.classList.toggle("has-photos", chosen.length > 0);
+    picker.querySelector(".add-tile").hidden = chosen.length >= MAX;
+    addLabel.textContent = chosen.length ? "Add more" : "Add photos";
+  };
+  input.addEventListener("change", () => {
+    const room = MAX - chosen.length;
+    const picked = [...input.files];
+    for (const file of picked.slice(0, room)) {
+      file.preview = URL.createObjectURL(file);
+      chosen.push(file);
+    }
+    say(picked.length > room ? `Up to ${MAX} photos per post, so only the first ${room} were added.` : "");
+    input.value = "";
+    show();
   });
   newPost.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!chosen.length) return say("Add at least one photo first.");
     const button = newPost.querySelector("[data-submit]");
     button.disabled = true;
     try {
@@ -122,12 +154,11 @@ if (newPost) {
           data.append("lat", lat);
           data.append("lon", lon);
         } catch (err) {
-          if (!confirm(`${err.message}\n\nShare it without a location? (It won't show on the Nearby feed.)`)) throw new Error("");
+          if (!confirm(`${err.message}\n\nShare it without a location? (It won't show on Nearby.)`)) throw new Error("");
         }
       }
-      const files = [...input.files].slice(0, 10);
-      for (const [i, file] of files.entries()) {
-        say(`Preparing photo ${i + 1} of ${files.length}…`);
+      for (const [i, file] of chosen.entries()) {
+        say(`Preparing photo ${i + 1} of ${chosen.length}…`);
         let blob = file;
         try {
           blob = await shrink(file);
@@ -147,6 +178,12 @@ if (newPost) {
     }
   });
 }
+
+// Profile photo: upload as soon as one is picked.
+document.addEventListener("change", (event) => {
+  const form = event.target.closest("form[data-photo-form]");
+  if (form && event.target.files?.length) form.submit();
+});
 
 // Chats: start at the newest message, and check for new ones every few
 // seconds while the page is open.

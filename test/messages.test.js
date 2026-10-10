@@ -230,14 +230,14 @@ test("Activity: likes, comments, follows and mentions, with a badge until seen",
   await sam.post(`/p/${postId}/like`); // and unlike: that one goes away
 
   await alex.get("/");
-  assert.match(alex.last.body, /href="\/activity" class="">♡<b class="count">2<\/b>/);
+  assert.match(alex.last.body, /aria-label="Activity"><svg[^>]*>(?:(?!<\/svg>).)*<\/svg><b class="count">2<\/b>/);
   await alex.get("/activity");
   assert.match(alex.last.body, /sam<\/strong><\/a> commented: “Love this!/);
   assert.match(alex.last.body, /jojo<\/strong><\/a> started following you/);
   assert.match(alex.last.body, /Follow back/);
   assert.doesNotMatch(alex.last.body, /liked your post/);
   await alex.get("/");
-  assert.doesNotMatch(alex.last.body, /href="\/activity" class="">♡<b/);
+  assert.doesNotMatch(alex.last.body, /aria-label="Activity"><svg[^>]*>(?:(?!<\/svg>).)*<\/svg><b/);
 
   // Jo was mentioned in the comment.
   await jo.get("/activity");
