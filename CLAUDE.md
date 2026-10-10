@@ -22,3 +22,8 @@
   once"); never call it a "snap". The code calls it a snap internally
   (kind 'snap'), which nobody sees. Don't compare Radius to Instagram or
   Snapchat anywhere people can see.
+- Teen mode: who can see or reach whom is decided only by the SQL function
+  can_interact (blocks + adults/teens never mix), via `canInteract` in
+  safety-store.js. Use it for anything new that shows people or content;
+  never write a separate check. Teen rules are settings (Admin → Teen mode).
+
