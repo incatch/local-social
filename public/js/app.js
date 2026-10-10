@@ -244,3 +244,66 @@ if (snapForm) {
     }
   });
 }
+
+// Moved? If location is already allowed for the site (so no permission
+// pop-up), check now and then, quietly. If they're far from their saved
+// spot, offer to update it with a small card they can wave away.
+const CHECK_EVERY = 30 * 60 * 1000;
+const SNOOZE = 24 * 60 * 60 * 1000;
+const remember = {
+  get: (k) => {
+    try {
+      return Number(localStorage.getItem(k) || 0);
+    } catch {
+      return 0;
+    }
+  },
+  set: (k, v) => {
+    try {
+      localStorage.setItem(k, String(v));
+    } catch {
+      // Private browsing: just check each visit.
+    }
+  },
+};
+async function checkMoved() {
+  const token = document.body.dataset.token;
+  if (!token || !navigator.permissions || !navigator.geolocation) return;
+  const now = Date.now();
+  if (now - remember.get("radius.checked") < CHECK_EVERY || now < remember.get("radius.snooze")) return;
+  try {
+    const permission = await navigator.permissions.query({ name: "geolocation" });
+    if (permission.state !== "granted") return;
+  } catch {
+    return;
+  }
+  remember.set("radius.checked", now);
+  let spot;
+  try {
+    spot = await locate();
+  } catch {
+    return;
+  }
+  const res = await fetch(`/location/check?lat=${spot.lat}&lon=${spot.lon}`, { headers: { accept: "application/json" } });
+  if (!res.ok) return;
+  const { moved, town } = await res.json();
+  if (!moved) return;
+
+  const card = document.createElement("div");
+  card.className = "moved";
+  card.setAttribute("role", "status");
+  card.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.6-6-10.5a6 6 0 0 1 12 0C18 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.2"/></svg><span></span><button type="button" class="small" data-yes>Update</button><button type="button" class="small link" data-no>Not now</button>';
+  card.querySelector("span").textContent = town ? `Looks like you're near ${town} now.` : "Looks like you've moved.";
+  document.body.append(card);
+  card.querySelector("[data-no]").addEventListener("click", () => {
+    remember.set("radius.snooze", Date.now() + SNOOZE);
+    card.remove();
+  });
+  card.querySelector("[data-yes]").addEventListener("click", async () => {
+    const body = new URLSearchParams({ _token: token, lat: spot.lat, lon: spot.lon });
+    const done = await fetch("/location/update", { method: "POST", body, headers: { accept: "application/json" } }).catch(() => null);
+    card.remove();
+    if (done?.ok && location.pathname === "/") location.reload();
+  });
+}
+checkMoved().catch(() => {});
