@@ -1,8 +1,8 @@
 # Notes for Claude
 
 - This is Radius (repo local-social, https://social.plopza.com), tagline
-  "Your world. Happening now.": Instagram-style posts,
-  a feed of what's near you, Snapchat-style messages. Built in four parts
+  "Your world. Happening now.": photo posts,
+  a feed of what's near you, disappearing messages with view-once photos. Built in four parts
   (see README.md); later it moves into ticket-hub for enhancements.
 - The owner is a smart non-engineer. Explain in plain English.
 - Privacy rules that must not regress (each has tests):
@@ -18,3 +18,7 @@
   reporting only.
 - Never put secrets in the code; they live in AWS Secrets Manager.
 - Run `npm test` (needs PostgreSQL; see README.md) before finishing.
+- Wording: on screen, a photo sent in a message is a "photo" (it "opens
+  once"); never call it a "snap". The code calls it a snap internally
+  (kind 'snap'), which nobody sees. Don't compare Radius to Instagram or
+  Snapchat anywhere people can see.

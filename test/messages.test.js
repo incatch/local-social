@@ -40,7 +40,7 @@ async function sendSnap(b, chat) {
 test("a first message to someone who doesn't follow you is a request", async () => {
   const chat = await openChat(sam, "alex");
   assert.match(sam.last.body, /Message request sent/);
-  assert.doesNotMatch(sam.last.body, /Send a snap/, "no snaps until accepted");
+  assert.doesNotMatch(sam.last.body, /Send a photo/, "no photos until accepted");
   await say(sam, chat, "hi alex!");
   await say(sam, chat, "it's sam");
   await say(sam, chat, "from the coffee shop");
@@ -69,7 +69,7 @@ test("a first message to someone who doesn't follow you is a request", async () 
   assert.doesNotMatch(alex.last.body, /wants to message you/);
   await sam.get(chat);
   assert.match(sam.last.body, /Seen/);
-  assert.match(sam.last.body, /Send a snap/);
+  assert.match(sam.last.body, /Send a photo/);
   const ok = await say(sam, chat, "great!");
   assert.equal(ok.status, 303);
 });
@@ -103,7 +103,7 @@ test("you can't message yourself, and the chat is private to the two people", as
   assert.equal(res.status, 404);
 });
 
-test("snaps open once, then the photo is deleted", async () => {
+test("view-once photos open once, then the photo is deleted", async () => {
   const chat = await openChat(sam, "alex");
   await alex.get(chat); // read what's there already
   const res = await sendSnap(sam, chat);
@@ -116,15 +116,15 @@ test("snaps open once, then the photo is deleted", async () => {
 
   // The sender can't open it; it just says it was sent.
   await sam.get(chat);
-  assert.match(sam.last.body, /Snap sent/);
-  assert.doesNotMatch(sam.last.body, /Tap to view snap/);
+  assert.match(sam.last.body, /Photo sent/);
+  assert.doesNotMatch(sam.last.body, /Tap to view photo/);
   const peek = await sam.post(`${chat}/snaps/${snap.id}`);
   assert.equal(peek.status, 400);
 
   await alex.get("/messages");
-  assert.match(alex.last.body, /New snap/);
+  assert.match(alex.last.body, /New photo/);
   await alex.get(chat);
-  assert.match(alex.last.body, /Tap to view snap/);
+  assert.match(alex.last.body, /Tap to view photo/);
   const view = await alex.post(`${chat}/snaps/${snap.id}`);
   assert.equal(view.status, 200);
   assert.match(view.body, /<img src="data:image\/webp;base64,/);
@@ -179,7 +179,7 @@ test("messages disappear 24 hours after they're read, unless both keep the chat"
   assert.equal(gone.length, 0);
 });
 
-test("unopened snaps are deleted with their photo when their time is up", async () => {
+test("unopened view-once photos are deleted with their photo when their time is up", async () => {
   const chat = await openChat(sam, "jojo");
   await sendSnap(sam, chat);
   const {

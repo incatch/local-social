@@ -63,7 +63,7 @@ test("photo screening: explicit photos are refused and kept in the store; border
   assert.equal(alex.last.status, 200);
 });
 
-test("screening also covers profile photos and snaps", async () => {
+test("screening also covers profile photos and view-once photos", async () => {
   await sam.get("/settings");
   const up = multipart("photo", "me.jpg", await phonePhoto({ color: "#ff0000" }));
   const res = await sam.request(`/settings/photo?_token=${sam.token()}`, { body: up.body, headers: up.headers });
@@ -171,7 +171,7 @@ test("blocking: no profile, posts, comments or messages either way; unblock from
   assert.equal((await sam.get("/@alex")).status, 200);
 });
 
-test("reporting a message keeps a copy; a snap can be reported for an hour after it's opened", async () => {
+test("reporting a message keeps a copy; a view-once photo can be reported for an hour after it's opened", async () => {
   await alex.get("/@sam");
   await alex.post("/@sam/follow"); // so sam can message alex straight away
   await sam.get("/@alex");
@@ -202,7 +202,7 @@ test("reporting a message keeps a copy; a snap can be reported for an hour after
   } = await app.pool.query("select id from messages where kind = 'snap' order by id desc limit 1");
   await alex.get(chat);
   const view = await alex.post(`${chat}/snaps/${snap.id}`);
-  assert.match(view.body, /Report this snap/);
+  assert.match(view.body, /Report this photo/);
   await report(alex, `type=message&c=${chat.split("/").pop()}&id=${snap.id}`, { reason: "nudity" });
   const snapReport = (await app.store.openReports()).find((x) => x.message_id === snap.id);
   assert.match(snapReport.snapshot_key, /^moderated\//);
