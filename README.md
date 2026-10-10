@@ -42,6 +42,26 @@ ever is. Live at https://social.plopza.com (invite-only beta).
    Microsoft PhotoDNA or Thorn Safer, which need an application) and have a
    lawyer review the terms, privacy policy and NCMEC reporting process.
 
+## Teen mode (off until the owner turns it on)
+
+Admin → Teen mode lets 13–17-year-olds join, in a world of their own:
+adults and teens can never see, find or message each other (one database
+function, `can_interact`, decides this everywhere, along with blocks). At 18
+an account becomes an adult one automatically. Settings, no code changes:
+
+- youngest age (13–17); US states where teens may join (they share their
+  rounded location once at sign-up; it also fills in their town);
+- a parent's OK by email for teens under a chosen age (the teen waits until
+  the parent clicks yes; no deletes the account);
+- who teens can message (mutual follows / followers / requests), view-once
+  photos (off / mutual follows / on), stricter photo screening (swimwear and
+  partial nudity held), distances on Nearby, and the smallest Nearby radius.
+
+We keep no birthday: for under-18s only the day they turn 18. The terms
+and privacy policy change with the settings. **Before turning it on:** a
+lawyer's OK (state laws change often), and later an age-estimation service
+(e.g. Yoti or Persona) if the laws where teens are allowed require it.
+
 ## Privacy rules the code keeps
 
 - **Location**: the phone's location is rounded to a ~1 mile grid before

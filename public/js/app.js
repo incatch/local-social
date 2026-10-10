@@ -307,3 +307,42 @@ async function checkMoved() {
   });
 }
 checkMoved().catch(() => {});
+
+// Joining (teen mode): show the parent's-email box for younger teens as soon
+// as the birthday is typed, and, where teen sign-ups are limited to some
+// states, get the (rounded) location when a teen taps Join.
+const welcome = document.querySelector("form[data-welcome]");
+if (welcome) {
+  const consentUnder = Number(welcome.dataset.consentUnder || 0);
+  const parentBox = welcome.querySelector("[data-parent]");
+  const ageFrom = (value) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+    if (!m) return null;
+    const now = new Date();
+    let age = now.getFullYear() - Number(m[1]);
+    if (now.getMonth() + 1 < Number(m[2]) || (now.getMonth() + 1 === Number(m[2]) && now.getDate() < Number(m[3]))) age -= 1;
+    return age;
+  };
+  welcome.elements.birth_date.addEventListener("change", () => {
+    const age = ageFrom(welcome.elements.birth_date.value);
+    if (parentBox) {
+      const show = age !== null && age < consentUnder;
+      parentBox.hidden = !show;
+      welcome.elements.parent_email.required = show;
+    }
+  });
+  welcome.addEventListener("submit", (event) => {
+    const age = ageFrom(welcome.elements.birth_date.value);
+    if (!welcome.dataset.teenLocation || age === null || age >= 18 || welcome.dataset.located) return;
+    event.preventDefault();
+    locate().then(
+      ({ lat, lon }) => {
+        welcome.elements.lat.value = lat;
+        welcome.elements.lon.value = lon;
+        welcome.dataset.located = "yes";
+        welcome.submit();
+      },
+      () => welcome.submit(), // the server explains what's needed
+    );
+  });
+}

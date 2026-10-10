@@ -19,6 +19,12 @@ test("photo screening rules", () => {
   // Refused: explicit nudity and sexual activity.
   assert.equal(verdict(["Exposed Female Genitalia", "Explicit Nudity", 95]), "refuse");
   assert.equal(verdict(["Exposed Buttocks or Anus", "Explicit Nudity", 96], ["Exposed Male Genitalia", "Explicit Nudity", 92]), "refuse");
+  // Teen accounts (strict): swimwear and partial nudity are held; the rest is the same.
+  const strict = (...labels) => decide(labels.map(([name, parent, confidence]) => ({ name, parent, confidence })), { strict: true });
+  assert.equal(strict(["Female Swimwear Or Underwear", "Swimwear or Underwear", 97]), "hold");
+  assert.equal(strict(["Partially Exposed Buttocks", "Non-Explicit Nudity", 95]), "hold");
+  assert.equal(strict(["Alcoholic Beverages", "Alcohol", 99]), "allow");
+  assert.equal(strict(["Exposed Female Genitalia", "Explicit Nudity", 95]), "refuse");
   // Low confidence doesn't count.
   assert.equal(verdict(["Exposed Female Genitalia", "Explicit Nudity", 62]), "allow");
 });
