@@ -72,7 +72,7 @@ test("joining: invite code, 18+, username and terms", async () => {
   assert.equal((await app.store.invites()).find((i) => i.id === invite.id).uses, 0, "failed tries don't use the invite");
 
   await b.post("/welcome", { ...good, invite: invite.code.toLowerCase() });
-  assert.equal(b.last.location, "/");
+  assert.equal(b.last.location, "/hello");
   const user = await app.store.userByUsername("joiner_1");
   assert.equal(user.display_name, "Joiner One");
   assert.ok(user.adult_confirmed_at && user.terms_accepted_at);
@@ -107,7 +107,7 @@ test("with sign-ups open, no invite is needed", async () => {
   await b.get("/welcome");
   assert.doesNotMatch(b.last.body, /Invite code/);
   await b.post("/welcome", { birth_date: "1980-12-31", username: "opener", display_name: "Open", terms: "on" });
-  assert.equal(b.last.location, "/");
+  assert.equal(b.last.location, "/hello");
   await app.store.setInviteOnly(true);
 });
 

@@ -404,6 +404,91 @@ if (townSearch) {
   });
 }
 
+// Phone notifications: turn on, test, turn off (the card in Settings and the first look).
+const pushCardEl = document.querySelector("[data-push]");
+if (pushCardEl) {
+  const $ = (sel) => pushCardEl.querySelector(sel);
+  const status = $("[data-push-status]");
+  const on = $("[data-push-on]");
+  const off = $("[data-push-off]");
+  const tryIt = $("[data-push-test]");
+  const ios = $("[data-push-ios]");
+  const token = document.body.dataset.token;
+  const post = (path, fields) => fetch(path, { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ _token: token, ...fields }) });
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const iPhone = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+  const show = (state, text) => {
+    on.hidden = state !== "off";
+    off.hidden = state !== "on";
+    tryIt.hidden = state !== "on";
+    if (text) status.textContent = text;
+  };
+  const keyBytes = (b64) => {
+    const raw = atob((b64 + "===".slice((b64.length + 3) % 4)).replace(/-/g, "+").replace(/_/g, "/"));
+    return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+  };
+  const subscription = async () => {
+    const reg = await navigator.serviceWorker.register("/sw.js");
+    await navigator.serviceWorker.ready;
+    return { reg, sub: await reg.pushManager.getSubscription() };
+  };
+  (async () => {
+    if (iPhone && !standalone) {
+      on.hidden = true;
+      ios.hidden = false;
+      return;
+    }
+    if (!supported) {
+      show("none", "This browser can't show notifications. Try Chrome, or Safari on an iPhone added to the Home Screen.");
+      return;
+    }
+    if (Notification.permission === "denied") {
+      show("none", "Notifications are blocked for Radius. Allow them in your browser or phone settings, then come back.");
+      return;
+    }
+    const { sub } = await subscription().catch(() => ({}));
+    if (sub && Notification.permission === "granted") {
+      await post("/push/subscribe", { endpoint: sub.endpoint, p256dh: sub.toJSON().keys.p256dh, auth: sub.toJSON().keys.auth }).catch(() => {});
+      show("on", "Notifications are on for this device. 👍");
+    } else show("off");
+  })();
+  on.addEventListener("click", async () => {
+    on.disabled = true;
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        show(permission === "denied" ? "none" : "off", "No problem. You can turn them on any time here.");
+        return;
+      }
+      const { reg } = await subscription();
+      const sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(pushCardEl.dataset.push) }));
+      const keys = sub.toJSON().keys;
+      const res = await post("/push/subscribe", { endpoint: sub.endpoint, p256dh: keys.p256dh, auth: keys.auth });
+      if (!res.ok) throw new Error("save failed");
+      if (navigator.vibrate) navigator.vibrate(12);
+      show("on", "Notifications are on for this device. 👍");
+    } catch {
+      status.textContent = "That didn't work. Please try again.";
+    } finally {
+      on.disabled = false;
+    }
+  });
+  tryIt.addEventListener("click", async () => {
+    tryIt.disabled = true;
+    await post("/push/test", {}).catch(() => {});
+    setTimeout(() => (tryIt.disabled = false), 3000);
+  });
+  off.addEventListener("click", async () => {
+    const { sub } = await subscription().catch(() => ({}));
+    if (sub) {
+      await post("/push/unsubscribe", { endpoint: sub.endpoint }).catch(() => {});
+      await sub.unsubscribe().catch(() => {});
+    }
+    show("off", "Notifications are off for this device.");
+  });
+}
+
 // Finding people: results update as you type.
 const peopleSearch = document.querySelector("[data-people-search]");
 if (peopleSearch) {

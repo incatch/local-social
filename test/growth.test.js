@@ -70,7 +70,7 @@ test("invite cards: every member has one, with a QR code; it brings people in", 
   await friend.get("/welcome");
   assert.match(friend.last.body, new RegExp(`value="${link.split("/").pop()}"`), "the code is filled in");
   await friend.post("/welcome", { invite: link.split("/").pop(), birth_date: "1990-01-01", username: "friend", display_name: "Friend", terms: "on" });
-  assert.equal(friend.last.location, "/");
+  assert.equal(friend.last.location, "/hello");
   await sam.get("/invite");
   assert.match(sam.last.body, /4 of 5 invites left/);
 

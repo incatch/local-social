@@ -71,7 +71,7 @@ test("joining as a teen: 13+, in an allowed state, and a parent's OK when younge
   await noPlace.post("/welcome", { birth_date: dob(15), username: "fifteen", display_name: "Fifteen", terms: "on", ...SPRINGFIELD });
   assert.match(noPlace.last.body, /parent&#39;s email/);
   await noPlace.post("/welcome", { birth_date: dob(15), username: "fifteen", display_name: "Fifteen", terms: "on", parent_email: "mom@example.com", ...SPRINGFIELD });
-  assert.equal(noPlace.last.location, "/");
+  assert.equal(noPlace.last.location, "/hello");
 
   // Waiting for the parent: nothing else works.
   await noPlace.get("/");
@@ -99,7 +99,7 @@ test("joining as a teen: 13+, in an allowed state, and a parent's OK when younge
 
 test("a parent can say no, which deletes the account", async () => {
   const b = await join(app, "fourteen@example.com", "fourteen", { birth_date: dob(14), parent_email: "dad@example.com", ...SPRINGFIELD });
-  assert.equal(b.last.location, "/");
+  assert.equal(b.last.location, "/hello");
   const link = app.emails.find((e) => e.to === "dad@example.com").text.match(/\/consent\/([A-Za-z0-9_-]+)/)[0];
   await app.browser().request(link, { form: { answer: "no" } });
   assert.equal(await app.store.userByUsername("fourteen"), null);
@@ -107,7 +107,7 @@ test("a parent can say no, which deletes the account", async () => {
 
 test("teens and adults live in separate worlds", async () => {
   const teen = await join(app, "seventeen@example.com", "seventeen", { birth_date: dob(17), ...SPRINGFIELD });
-  assert.equal(teen.last.location, "/", "17: no parent needed (under 16 only)");
+  assert.equal(teen.last.location, "/hello", "17: no parent needed (under 16 only)");
   const teenPost = await share(teen, "teen sunset");
   const adultPost = await share(adult, "adult sunset");
   for (const b of [teen, adult]) {

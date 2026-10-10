@@ -124,6 +124,27 @@ Admin → Nearby rules.
   many joined from a friend's invite; the last 14 days (here, joined, posts,
   comments, messages, Around you, emails); the busiest towns; feedback.
 
+## First look and phone notifications
+
+- **First look** (`/hello`, right after joining): "31 people on Radius
+  within 10 miles of Springfield", the best photos of the week around
+  them, people to follow, and turning on notifications. If we don't know
+  where they are yet, one button asks.
+- **Phone notifications** (`lib/push.js`, web push): likes, comments,
+  follows, mentions, answers, Moments, ripples, badges and messages buzz
+  the phone. Never what a message says. Works on Android and computers in
+  the browser, and on iPhone once Radius is added to the Home Screen (the
+  card explains how). Turn on in Settings, the first look, or the top of
+  Activity. Sent every 5 seconds by `server.js`; each is claimed in the
+  database first so it's sent once. The push keys are worked out from the
+  site's secret, so there's nothing extra to set up.
+
+## New features: Off, 18+ only or Everyone
+
+Admin → New features sets who gets Pull Up, Squads, Drops, Where It's At
+and video/Moment Reels (`lib/features.js`). They start as 18+ only; check
+with `featureOn(settings, key, user)` wherever one shows up.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC

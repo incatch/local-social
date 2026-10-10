@@ -447,3 +447,28 @@ table.daily th:first-child, table.daily td:first-child { text-align: left; }
 ul.feedback-list { list-style: none; padding: 0; margin: 0; }
 .feedback-item { border-top: 1px solid var(--line); padding: 12px 0; }
 .feedback-body { white-space: pre-wrap; margin: 6px 0; }
+
+/* ── The first look, phone notifications, Admin → New features ── */
+.hello-hero { text-align: center; padding: 18px 8px 8px; }
+.hello-hero h1 { font-size: 22px; margin: 4px 0 10px; letter-spacing: -0.4px; }
+.rings-mark.big { width: 96px; height: 96px; margin-bottom: 10px; }
+.rings-mark.big span:nth-child(1) { width: 22px; height: 22px; }
+.rings-mark.big span:nth-child(2) { width: 56px; height: 56px; animation: hello-pulse 2.4s ease-out infinite; }
+.rings-mark.big span:nth-child(3) { width: 92px; height: 92px; animation: hello-pulse 2.4s ease-out 0.4s infinite; }
+@keyframes hello-pulse { 0% { transform: scale(0.85); opacity: 1; } 100% { transform: scale(1.12); opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .rings-mark.big span { animation: none !important; } }
+.hello-count { margin: 0; font-size: 18px; color: var(--muted); }
+.hello-count strong { display: block; font-size: 64px; line-height: 1; color: var(--brand); letter-spacing: -2px; }
+.hello-grid .cell { position: relative; }
+.cell-likes { position: absolute; left: 6px; bottom: 6px; background: rgba(28, 27, 51, 0.6); color: #fff; font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 3px; }
+.hello-go { margin-top: 18px; }
+.push-card h2 { display: flex; align-items: center; gap: 8px; }
+.push-buttons { gap: 8px; flex-wrap: wrap; align-items: center; }
+.ios-tip { background: var(--accent-soft); border-radius: 14px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+.share-glyph { display: inline-block; border: 1.5px solid currentColor; border-radius: 5px; padding: 0 4px; font-size: 12px; }
+.segmented { display: inline-flex; background: #e9e8f4; border-radius: 999px; padding: 3px; gap: 2px; }
+.segmented input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented span { display: inline-block; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 14px; color: var(--muted); cursor: pointer; }
+.segmented input:checked + span { background: var(--ink); color: #fff; }
+.segmented input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
+.push-card [hidden] { display: none !important; }
