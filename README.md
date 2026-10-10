@@ -18,8 +18,15 @@ ever is. Live at https://social.plopza.com (invite-only beta).
    and a Following feed; profile grids. Photos are shrunk in the browser
    before uploading, then re-encoded on the server (full size and a square
    thumbnail).
-3. **Messages and snaps**: message requests, view-once snaps, chat that
-   disappears 24 hours after it's read (unless both save it), notifications.
+3. **Messages and snaps** (done): one-to-one chats from a profile's Message
+   button. A first message to someone who doesn't follow you is a message
+   request (up to 3 texts, no snaps, until they accept or reply; they can
+   delete it). Snaps open once and the photo is deleted as it's shown. Read
+   messages disappear 24 hours after they're read unless both people keep
+   the chat; unread ones after 30 days. Unsend, "Seen", new messages appear
+   without reloading. Activity page for likes, comments, follows and
+   @mentions, with badges on the bottom bar. The app icon and "Add to Home
+   Screen" support.
 4. **Safety**: report and block, automatic photo screening, the admin
    moderation queue, and the moderated-out store (labelled, for training a
    moderation model later; anything involving minors goes to legal hold, never

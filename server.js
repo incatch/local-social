@@ -26,11 +26,12 @@ async function main(env = process.env) {
       { signedInUser: async () => (env.LOCAL_ADMIN === "yes" ? { email: String(env.OWNER_EMAIL || "").toLowerCase() } : null) };
   const admins = [env.OWNER_EMAIL, ...String(env.ADMIN_EMAILS || "").split(",")].map((e) => String(e || "").trim().toLowerCase()).filter(Boolean);
 
+  const media = env.MEDIA_BUCKET ? createS3Store({ bucket: env.MEDIA_BUCKET, region }) : createDirStore(env.MEDIA_DIR || "./media-files");
   const handler = createApp({
     store,
     sessions: createSessions(env.SESSION_SECRET),
     sendEmail: env.EMAIL_FROM ? createSesSender({ region, from: env.EMAIL_FROM }) : consoleSender(),
-    media: env.MEDIA_BUCKET ? createS3Store({ bucket: env.MEDIA_BUCKET, region }) : createDirStore(env.MEDIA_DIR || "./media-files"),
+    media,
     places: createPlaces(),
     auth,
     admins,
@@ -44,6 +45,18 @@ async function main(env = process.env) {
   const server = http.createServer(handler);
   server.requestTimeout = 5 * 60 * 1000; // photo uploads on slow phone connections
   server.listen(port, () => console.log(`local social listening on port ${port}`));
+
+  // Disappearing messages: every 10 minutes, delete the ones whose time is up
+  // (and their snap photos). Safe to run in several containers at once.
+  const purge = async () => {
+    try {
+      for (const key of await store.purgeMessages()) await media.remove(key).catch(() => {});
+    } catch (err) {
+      console.error("purging messages failed", err);
+    }
+  };
+  setInterval(purge, 10 * 60 * 1000).unref();
+  purge();
 
   // Let Fargate stop the container cleanly during deploys.
   process.on("SIGTERM", () => server.close(() => pool.end().then(() => process.exit(0))));
