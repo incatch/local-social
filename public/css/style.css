@@ -325,3 +325,43 @@ li.off-nearby form, li.off-nearby button { margin: 0; }
 .moment-head h1 { margin: 2px 0 0; }
 .moment-head .ic { display: inline-block; vertical-align: -2px; }
 .in-moment { display: flex; align-items: center; gap: 6px; background: var(--brand-soft); color: var(--brand); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; text-decoration: none; font-size: 14px; }
+
+/* ── Around you (signals) ── */
+.around-bar { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; background: var(--card); border-radius: 18px; padding: 10px 14px; margin: 0 0 16px; box-shadow: var(--shadow); color: var(--ink); text-decoration: none; }
+.around-bar .around-label { grid-row: span 2; font-weight: 800; color: var(--brand); font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; }
+.around-bar .around-teaser { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.around-bar .around-counts { color: var(--muted); font-size: 13px; }
+.around-bar.quiet { display: flex; gap: 8px; color: var(--muted); font-size: 14px; font-weight: 600; box-shadow: none; background: transparent; border: 1.5px dashed var(--line); }
+.around-bar.quiet span { flex: 1; }
+.around-head { display: flex; align-items: center; gap: 4px; }
+.around-head h1 { margin: 4px 0; }
+.send-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; align-items: center; }
+.send-chip { background: var(--brand-soft); border-radius: 999px; padding: 7px 13px; color: var(--brand); text-decoration: none; font-weight: 700; font-size: 14px; }
+.small-row { margin: 0 0 12px; }
+.small-row .send-chip { padding: 5px 11px; font-size: 13px; box-shadow: none; background: var(--brand-soft); color: var(--brand); }
+.filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 12px; }
+.filters .filter { flex: none; padding: 6px 12px; border-radius: 999px; background: #e9e8f4; color: var(--muted); text-decoration: none; font-weight: 700; font-size: 13px; }
+.filters .filter.on { background: var(--ink); color: #fff; }
+.signal { background: var(--card); border-radius: 18px; padding: 12px 14px; margin-bottom: 12px; box-shadow: var(--shadow); border-left: 4px solid var(--brand); }
+.signal.kind-plan { border-left-color: var(--accent); }
+.signal.kind-lost { border-left-color: #e05a5a; }
+.signal.kind-poll { border-left-color: #2fa36b; }
+.signal header { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.kind-badge { font-weight: 800; font-size: 13px; }
+.signal-body { font-size: 17px; font-weight: 600; margin: 6px 0 8px; white-space: pre-wrap; word-wrap: break-word; }
+.signal footer { display: flex; align-items: center; gap: 6px; }
+.signal footer .who { display: flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; }
+.plan-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.plan-row button { margin: 0; }
+.plan-time { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; color: #b5650f; }
+.poll { display: grid; gap: 6px; margin: 0 0 8px; }
+.poll-option { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--bg); color: var(--ink); border: 1.5px solid var(--line); font-weight: 600; overflow: hidden; text-align: left; }
+.poll-option:hover { background: var(--brand-soft); }
+.poll-option .bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--brand-soft); z-index: 0; }
+.poll-option span, .poll-option b { position: relative; z-index: 1; }
+.poll-option.mine { border-color: var(--brand); }
+.poll-input { margin-top: 6px; }
+.replies { list-style: none; padding: 0; margin: 0 0 12px; }
+.replies li { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.replies li.thanked { background: var(--accent-soft); border-radius: 12px; padding: 10px; }
+.replies a { color: var(--ink); text-decoration: none; }
