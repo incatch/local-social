@@ -147,3 +147,63 @@ if (newPost) {
     }
   });
 }
+
+// Chats: start at the newest message, and check for new ones every few
+// seconds while the page is open.
+const chat = document.querySelector("[data-chat]");
+if (chat) {
+  const toBottom = () => window.scrollTo(0, document.body.scrollHeight);
+  toBottom();
+  let busy = false;
+  setInterval(async () => {
+    if (busy || document.hidden) return;
+    busy = true;
+    try {
+      const res = await fetch(chat.dataset.chat, { headers: { accept: "text/html" } });
+      if (res.ok) {
+        const html = await res.text();
+        if (html.trim() !== chat.innerHTML.trim()) {
+          const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 120;
+          chat.innerHTML = html;
+          if (nearBottom) toBottom();
+        }
+      }
+    } catch {
+      // Try again next time.
+    }
+    busy = false;
+  }, 4000);
+}
+
+// Snaps: send as soon as a photo is picked (shrunk on the phone first).
+const snapForm = document.querySelector("[data-snap]");
+if (snapForm) {
+  const input = snapForm.elements.photo;
+  const status = snapForm.querySelector("[data-status]");
+  const say = (text) => {
+    status.textContent = text;
+    status.hidden = !text;
+  };
+  input.addEventListener("change", async () => {
+    const file = input.files[0];
+    if (!file) return;
+    say("Sending snap…");
+    try {
+      let blob = file;
+      try {
+        blob = await shrink(file);
+      } catch {
+        // Send the original; the server shrinks it.
+      }
+      const data = new FormData();
+      data.append("photo", blob, "snap.jpg");
+      const res = await fetch(snapForm.action, { method: "POST", body: data, headers: { accept: "application/json" } });
+      const out = await res.json().catch(() => ({ error: "Something went wrong. Please try again." }));
+      if (!res.ok) throw new Error(out.error);
+      location.href = out.location;
+    } catch (err) {
+      say(err.message);
+      input.value = "";
+    }
+  });
+}
