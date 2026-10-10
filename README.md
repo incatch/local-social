@@ -103,6 +103,27 @@ people join), 🌊 Ripple maker. Shown on profiles; /badges explains them;
 an Activity note when one is earned. Rules in `lib/badges.js`; switch in
 Admin → Nearby rules.
 
+## Beta polish
+
+- **Find people:** the magnifying glass at the top of every page. Search by
+  name or @username (results update as you type; follow right from the
+  list). Before typing, it shows people around you that you don't follow
+  yet. Only people you're allowed to see show up (blocks, teen mode).
+- **Feedback:** "Send feedback" in Settings and on your own profile. Pick
+  Idea / Something's wrong / Something else, write a note. It lands in
+  Admin → Beta (with the page they were on and their device), and the
+  owner gets an email (at most one every 15 minutes).
+- **Email nudges** (`lib/nudges.js`, every 10 minutes): an email when
+  messages have waited an hour unread (at most one a day, only for new
+  messages, never what they say), and a weekly "N new posts around
+  <town>" for people away 3+ days, only when there's something new. Every
+  email has a one-tap "turn them off" link; people can also switch them in
+  Settings → Emails, and the owner can switch them all off in Admin → Beta.
+- **Admin → Beta:** members; who was here today / this week / this month;
+  how many came back after day one and are still here after a week; how
+  many joined from a friend's invite; the last 14 days (here, joined, posts,
+  comments, messages, Around you, emails); the busiest towns; feedback.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC
@@ -149,7 +170,9 @@ lawyer's OK (state laws change often), and later an age-estimation service
 ## Admin
 
 https://social.plopza.com/admin (household sign-in): who has joined, ban and
-unban, invites (with join links), and opening sign-ups to everyone.
+unban, invites (with join links), opening sign-ups to everyone, the
+moderation queue, Nearby rules, Teen mode, and Beta (how the beta is going,
+feedback, email nudges).
 
 ## Running it on your computer
 

@@ -404,6 +404,29 @@ if (townSearch) {
   });
 }
 
+// Finding people: results update as you type.
+const peopleSearch = document.querySelector("[data-people-search]");
+if (peopleSearch) {
+  const results = document.querySelector("[data-people-results]");
+  let timer;
+  let latest = 0;
+  peopleSearch.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const q = peopleSearch.value.trim();
+      const ask = ++latest;
+      try {
+        const res = await fetch(`/search?partial=1&q=${encodeURIComponent(q)}`);
+        if (!res.ok || ask !== latest) return;
+        results.innerHTML = await res.text();
+        history.replaceState(null, "", q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+      } catch {
+        // Pressing search still works.
+      }
+    }, 200);
+  });
+}
+
 // ── Shareable pictures (the daily recap, invite cards), drawn on the phone ──
 const loadImage = (src) =>
   new Promise((resolve, reject) => {
