@@ -71,6 +71,16 @@ going on join it. Moments show at the top of Nearby ("Happening now"), each
 post in one links to it, and the posters get an Activity note. Political and
 AI-made posts don't join; each viewer only sees what they're allowed to.
 
+## Around you (signals)
+
+Quick text posts to people within your Nearby distance that disappear on
+their own: ❓ Ask (neighbours answer; the asker can 🙏 thank the best one),
+🔥 Plan (a time and "I'm in"; gone 2 hours after), 🐾 Lost & found (3 days)
+and 📊 Poll (2–4 choices, a day). Easy to find but never in the way: one
+slim "Around you" bar on Nearby, a small row on the + page, and the Around
+you page. No politics; reportable; blocks and teen mode apply. On/off in
+Admin → Nearby rules.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC

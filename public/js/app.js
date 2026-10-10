@@ -350,3 +350,32 @@ if (welcome) {
     );
   });
 }
+
+// Plans: send the time with the phone's own time zone.
+const signalForm = document.querySelector("form[data-signal]");
+if (signalForm && signalForm.elements.plan_at) {
+  signalForm.addEventListener("submit", () => {
+    const v = signalForm.elements.plan_at.value;
+    if (v) signalForm.elements.plan_at_iso.value = new Date(v).toISOString();
+  });
+}
+
+// "I'm in" without reloading.
+document.addEventListener("submit", async (event) => {
+  const form = event.target;
+  if (!form.matches("[data-join]")) return;
+  event.preventDefault();
+  try {
+    const res = await fetch(form.action, { method: "POST", body: new URLSearchParams(new FormData(form)), headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error();
+    const { joined, count } = await res.json();
+    const button = form.querySelector("button");
+    button.textContent = joined ? "✓ You're in" : "I'm in";
+    button.classList.toggle("secondary", joined);
+    const counter = form.parentElement.querySelector("[data-join-count]");
+    if (counter) counter.textContent = `${count} in`;
+    if (joined && navigator.vibrate) navigator.vibrate(12);
+  } catch {
+    form.submit();
+  }
+});
