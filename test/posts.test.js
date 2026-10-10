@@ -171,7 +171,10 @@ test("the Nearby feed: needs your location, respects the distance, skips posts w
 
   await viewer.post("/feed/radius", { miles: "25" });
   await viewer.get("/");
-  assert.match(viewer.last.body, /in nixa/);
+  assert.doesNotMatch(viewer.last.body, /in nixa/, "a new post ripples out to 10 miles at first");
+  await app.pool.query("update posts set like_count = 3 where caption = 'in nixa'");
+  await viewer.get("/");
+  assert.match(viewer.last.body, /in nixa/, "with 3 likes it reaches 25 miles");
   await viewer.post("/feed/radius", { miles: "7" });
   assert.equal(viewer.last.status, 400);
 
