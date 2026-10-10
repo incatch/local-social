@@ -6,11 +6,15 @@ ever is. Live at https://social.plopza.com (invite-only beta).
 
 ## Being built in four parts
 
-1. **Accounts and profiles** (this part): sign in with an emailed code
+1. **Accounts and profiles** (done): sign in with an emailed code
    (stays signed in on each device), invite codes during the beta, 18+ only,
    username, name, bio, profile photo, and your area.
-2. **Posts and feeds**: photos and carousels, captions, likes, comments,
-   @mentions; a Nearby feed (5/10/25/50 miles) and a Following feed.
+2. **Posts and feeds** (done): photos and carousels of up to 10, captions,
+   likes, comments, @mentions, follows; a Nearby feed (5/10/25/50 miles from
+   your latest rounded location, newest first with a light boost for likes)
+   and a Following feed; profile grids. Photos are shrunk in the browser
+   before uploading, then re-encoded on the server (full size and a square
+   thumbnail).
 3. **Messages and snaps**: message requests, view-once snaps, chat that
    disappears 24 hours after it's read (unless both save it), notifications.
 4. **Safety**: report and block, automatic photo screening, the admin

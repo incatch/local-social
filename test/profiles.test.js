@@ -15,7 +15,7 @@ test.after(() => app.stop());
 
 test("home and profile pages", async () => {
   await sam.get("/");
-  assert.match(sam.last.body, /Hi, sam/);
+  assert.match(sam.last.body, /Nearby/);
   await sam.get("/@sam");
   assert.equal(sam.last.status, 200);
   assert.match(sam.last.body, /Edit profile/);

@@ -99,7 +99,8 @@ function browser(base) {
     get: (p, opts) => b.request(p, opts),
     /** The form token on the last page. */
     token() {
-      return b.last.body.match(/name="_token" value="([^"]+)"/)[1];
+      const m = b.last.body.match(/name="_token" value="([^"]+)"/) || b.last.body.match(/_token=([^"&]+)/);
+      return m[1];
     },
     /** POST a form with the last page's token. */
     post(p, form = {}) {
@@ -137,6 +138,20 @@ function phonePhoto({ width = 2000, height = 1500 } = {}) {
     .toBuffer();
 }
 
+/** A multipart/form-data body with fields and several files (all in field `field`). */
+function multipartMany(fields, field, buffers) {
+  const boundary = "----test" + Date.now() + Math.random().toString(16).slice(2);
+  const parts = [];
+  for (const [name, value] of Object.entries(fields)) {
+    parts.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${value}\r\n`));
+  }
+  buffers.forEach((buffer, i) => {
+    parts.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="${field}"; filename="p${i}.jpg"\r\nContent-Type: image/jpeg\r\n\r\n`), buffer, Buffer.from("\r\n"));
+  });
+  parts.push(Buffer.from(`--${boundary}--\r\n`));
+  return { body: Buffer.concat(parts), headers: { "content-type": `multipart/form-data; boundary=${boundary}` } };
+}
+
 /** A multipart/form-data body with one file. */
 function multipart(field, filename, buffer, type = "image/jpeg") {
   const boundary = "----test" + Date.now();
@@ -145,4 +160,4 @@ function multipart(field, filename, buffer, type = "image/jpeg") {
   return { body: Buffer.concat([head, buffer, tail]), headers: { "content-type": `multipart/form-data; boundary=${boundary}` } };
 }
 
-module.exports = { startApp, signIn, join, phonePhoto, multipart, OWNER, SITE_URL };
+module.exports = { startApp, signIn, join, phonePhoto, multipart, multipartMany, OWNER, SITE_URL };

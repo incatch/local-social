@@ -1,26 +1,149 @@
-// "Use my location": asks the phone where it is, rounds it to about a mile
-// right here in the browser (the server rounds it again), and sends only that.
+// Small helpers for the pages. Everything works without them (plain
+// forms), they just make it nicer on a phone.
+
+const GRID = 1 / 69; // about a mile, as on the server
+
+/** The phone's location, rounded to about a mile here in the browser. */
+function locate() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error("This browser can't share its location."));
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolve({ lat: (Math.round(p.coords.latitude / GRID) * GRID).toFixed(3), lon: (Math.round(p.coords.longitude / GRID) * GRID).toFixed(3) }),
+      () => reject(new Error("Location is turned off for this site. Allow it in your browser's settings and try again.")),
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10 * 60 * 1000 },
+    );
+  });
+}
+
+// "Use my location" buttons (profile area, Nearby feed).
 document.addEventListener("submit", (event) => {
   const form = event.target;
   if (!form.matches("[data-locate]") || form.dataset.located) return;
   event.preventDefault();
   const error = document.querySelector("[data-locate-error]");
-  const fail = (message) => {
-    if (error) {
-      error.textContent = message;
-      error.hidden = false;
-    }
-  };
-  if (!navigator.geolocation) return fail("This browser can't share its location.");
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const step = 1 / 69;
-      form.elements.lat.value = (Math.round(position.coords.latitude / step) * step).toFixed(3);
-      form.elements.lon.value = (Math.round(position.coords.longitude / step) * step).toFixed(3);
+  locate().then(
+    ({ lat, lon }) => {
+      form.elements.lat.value = lat;
+      form.elements.lon.value = lon;
       form.dataset.located = "yes";
       form.submit();
     },
-    () => fail("Location is turned off for this site. Allow it in your browser's settings and try again."),
-    { enableHighAccuracy: false, timeout: 15000, maximumAge: 10 * 60 * 1000 },
+    (err) => {
+      if (error) {
+        error.textContent = err.message;
+        error.hidden = false;
+      }
+    },
   );
 });
+
+// Selects that apply as soon as they change (the Nearby distance).
+document.addEventListener("change", (event) => {
+  const form = event.target.closest("form[data-autosubmit]");
+  if (form) form.submit();
+});
+
+// Likes without reloading the page.
+document.addEventListener("submit", async (event) => {
+  const form = event.target;
+  if (!form.matches("[data-like]")) return;
+  event.preventDefault();
+  try {
+    const res = await fetch(form.action, { method: "POST", body: new URLSearchParams(new FormData(form)), headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error();
+    const { liked, count } = await res.json();
+    const button = form.querySelector("button");
+    button.textContent = liked ? "♥" : "♡";
+    button.classList.toggle("liked", liked);
+    button.setAttribute("aria-pressed", String(liked));
+    form.querySelector("[data-like-count]").textContent = count;
+  } catch {
+    form.submit();
+  }
+});
+
+// Carousels: light up the dot for the photo in view.
+for (const carousel of document.querySelectorAll("[data-carousel]")) {
+  const dots = carousel.nextElementSibling?.matches(".dots") ? [...carousel.nextElementSibling.children] : [];
+  const update = () => {
+    const i = Math.round(carousel.scrollLeft / carousel.clientWidth);
+    dots.forEach((d, j) => d.classList.toggle("on", i === j));
+  };
+  carousel.addEventListener("scroll", update, { passive: true });
+  update();
+}
+
+// New posts: shrink photos on the phone first (much faster uploads; it
+// also drops their hidden location data, which the server removes again),
+// and add the rounded location if wanted.
+const MAX_SIDE = 2048;
+async function shrink(file) {
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("resize failed"))), "image/jpeg", 0.88));
+}
+
+const newPost = document.querySelector("[data-new-post]");
+if (newPost) {
+  const input = newPost.elements.photos;
+  const previews = newPost.querySelector("[data-previews]");
+  const status = newPost.querySelector("[data-status]");
+  const say = (text) => {
+    status.textContent = text;
+    status.hidden = !text;
+  };
+  input.addEventListener("change", () => {
+    previews.replaceChildren(
+      ...[...input.files].slice(0, 10).map((f) => {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(f);
+        img.alt = "";
+        return img;
+      }),
+    );
+    if (input.files.length > 10) say("Only the first 10 photos will be shared.");
+  });
+  newPost.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = newPost.querySelector("[data-submit]");
+    button.disabled = true;
+    try {
+      const data = new FormData();
+      data.append("caption", newPost.elements.caption.value);
+      if (newPost.elements.with_location.checked) {
+        say("Getting your location…");
+        try {
+          const { lat, lon } = await locate();
+          data.append("with_location", "on");
+          data.append("lat", lat);
+          data.append("lon", lon);
+        } catch (err) {
+          if (!confirm(`${err.message}\n\nShare it without a location? (It won't show on the Nearby feed.)`)) throw new Error("");
+        }
+      }
+      const files = [...input.files].slice(0, 10);
+      for (const [i, file] of files.entries()) {
+        say(`Preparing photo ${i + 1} of ${files.length}…`);
+        let blob = file;
+        try {
+          blob = await shrink(file);
+        } catch {
+          // Send the original; the server shrinks it.
+        }
+        data.append("photos", blob, `photo${i + 1}.jpg`);
+      }
+      say("Sharing…");
+      const res = await fetch(newPost.action, { method: "POST", body: data, headers: { accept: "application/json" } });
+      const out = await res.json().catch(() => ({ error: "Something went wrong. Please try again." }));
+      if (!res.ok) throw new Error(out.error);
+      location.href = out.location;
+    } catch (err) {
+      say(err.message);
+      button.disabled = false;
+    }
+  });
+}
