@@ -1,4 +1,4 @@
-// Local Social. Settings come from environment variables (set in
+// Radius (this repository is local-social). Settings come from environment variables (set in
 // infra/lib/local-social-stack.ts on AWS).
 
 const http = require("http");

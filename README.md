@@ -1,7 +1,10 @@
-# Local Social
+# Radius
 
-An Instagram-style social site for what's happening near you, with
-Snapchat-style messages. Every profile is public; nobody's exact location
+*Your world. Happening now.*
+
+Instagram shows you people you know. Radius introduces you to the people
+around you: Instagram-style posts and a feed of what's happening near you,
+with Snapchat-style messages. Every profile is public; nobody's exact location
 ever is. Live at https://social.plopza.com (invite-only beta).
 
 ## Being built in four parts

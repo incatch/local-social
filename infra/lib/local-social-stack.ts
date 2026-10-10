@@ -28,7 +28,7 @@ export interface LocalSocialStackProps extends cdk.StackProps {
 }
 
 /**
- * Local Social. To save money it shares ticket-hub's network, load balancer
+ * Radius (this repository is local-social). To save money it shares ticket-hub's network, load balancer
  * and database server (see incatch/ticket-hub, which publishes them under
  * /household/shared/ in Parameter Store), like the other household apps:
  *
@@ -175,7 +175,7 @@ export class LocalSocialStack extends cdk.Stack {
         // The database on the server that already exists (ticket-hub's),
         // used once to create the social database.
         DB_ADMIN_DATABASE: "tickethub",
-        EMAIL_FROM: `Local Social <${emailFrom}>`,
+        EMAIL_FROM: `Radius <${emailFrom}>`,
         MEDIA_BUCKET: media.bucketName,
         SITE_TIME_ZONE: props.timeZone,
       },
