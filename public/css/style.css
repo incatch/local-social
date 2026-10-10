@@ -283,3 +283,25 @@ button.legal { background: #7a1f1f; }
 li.off-nearby img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; }
 li.off-nearby form, li.off-nearby button { margin: 0; }
 .taken { position: absolute; right: 10px; top: 10px; display: inline-flex; align-items: center; gap: 3px; background: rgba(21, 128, 61, 0.85); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 10px 5px 8px; border-radius: 999px; }
+
+/* ── Ripples, all caught up, a year ago ── */
+.rippled { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 4px; background: rgba(91, 95, 224, 0.88); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 10px 5px 8px; border-radius: 999px; }
+.new-chip { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 auto 14px; width: fit-content; background: var(--brand); color: #fff; font-weight: 700; font-size: 14px; padding: 7px 14px; border-radius: 999px; box-shadow: 0 4px 14px rgba(91, 95, 224, 0.35); }
+.caught-up { text-align: center; padding: 26px 16px 8px; }
+.caught-up h2 { font-size: 20px; margin: 10px 0 4px; }
+.rings-mark { position: relative; width: 64px; height: 64px; margin: 0 auto; }
+.rings-mark span { position: absolute; inset: 0; margin: auto; border-radius: 50%; border: 2.5px solid var(--brand); }
+.rings-mark span:nth-child(1) { width: 16px; height: 16px; background: var(--brand); }
+.rings-mark span:nth-child(2) { width: 38px; height: 38px; border-color: var(--ring); }
+.rings-mark span:nth-child(3) { width: 62px; height: 62px; }
+@media (prefers-reduced-motion: no-preference) {
+  .rings-mark span:nth-child(3) { animation: ripple 2.4s ease-out infinite; }
+}
+@keyframes ripple { from { transform: scale(0.6); opacity: 1; } to { transform: scale(1.25); opacity: 0; } }
+.year-ago { margin: 18px 0; }
+.year-ago h2 { display: flex; align-items: center; gap: 6px; font-size: 16px; }
+.year-ago .strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.year-ago .cell { position: relative; flex: 0 0 120px; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; background: #e3e2ee; }
+.year-ago .cell img { width: 100%; height: 100%; object-fit: cover; display: block; filter: sepia(0.25); }
+.year-ago .cell span { position: absolute; left: 8px; bottom: 6px; color: #fff; font-weight: 800; font-size: 13px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); }
+.ripple-rows input[type="number"] { width: 70px; padding: 6px 8px; }

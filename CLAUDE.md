@@ -28,3 +28,9 @@
   never write a separate check. Teen rules are settings (Admin → Teen mode).
 - The camera's own time and GPS (from the original file) are only compared
   for the "Taken here" badge, never stored or logged (`lib/provenance.js`).
+- Product principle (from the owner): the users are the product. Every
+  decision should help attract and keep a mass audience (growth, delight,
+  sharing, daily habit) and make Radius venture-capital worthy. No
+  monetization features for now. Think like a product designer: small
+  touches that make a big difference.
+

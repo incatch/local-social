@@ -53,6 +53,15 @@ office or party member; looked up once per person). Admin → Nearby rules:
 turn it on/off, edit the words and extra names (saving re-checks the last
 30 days), and "Show on Nearby anyway" for mistakes.
 
+## Ripples and the end of the feed
+
+A new post reaches people within 10 miles; at 3 likes + comments it ripples
+to 25 miles, at 10 to 50 (Admin → Nearby rules), and the poster gets an
+Activity note each time it reaches a new ring. Nearby shows the last 14
+days, says "N new since you last looked", and ends with "You're all caught
+up" (no endless scroll) and "Around here, a year ago": photos from this
+week in past years.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC
