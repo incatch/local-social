@@ -62,6 +62,15 @@ days, says "N new since you last looked", and ends with "You're all caught
 up" (no endless scroll) and "Around here, a year ago": photos from this
 week in past years.
 
+## Moments
+
+When 3 different people post within 1 mile of each other within 3 hours
+(Admin → Nearby rules), their posts become a Moment, a shared album titled
+like "Friday night in Springfield". Later posts from the same spot while it's
+going on join it. Moments show at the top of Nearby ("Happening now"), each
+post in one links to it, and the posters get an Activity note. Political and
+AI-made posts don't join; each viewer only sees what they're allowed to.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC
