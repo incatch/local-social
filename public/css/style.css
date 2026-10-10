@@ -113,3 +113,4 @@ button.icon.liked { color: var(--brand); }
 .previews img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; flex: none; }
 .more { text-align: center; }
 button:disabled { opacity: 0.6; }
+.lead { font-size: 18px; font-weight: 600; }

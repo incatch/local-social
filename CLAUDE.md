@@ -1,6 +1,7 @@
 # Notes for Claude
 
-- This is Local Social (https://social.plopza.com): Instagram-style posts,
+- This is Radius (repo local-social, https://social.plopza.com), tagline
+  "Your world. Happening now.": Instagram-style posts,
   a feed of what's near you, Snapchat-style messages. Built in four parts
   (see README.md); later it moves into ticket-hub for enhancements.
 - The owner is a smart non-engineer. Explain in plain English.
