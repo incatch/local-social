@@ -15,13 +15,25 @@ function locate() {
   });
 }
 
+/** The phone's exact location, only for checks that need it (Drops). The server never stores it. */
+function locatePrecise() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error("This browser can't share its location."));
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolve({ lat: p.coords.latitude.toFixed(6), lon: p.coords.longitude.toFixed(6) }),
+      () => reject(new Error("Location is turned off for this site. Allow it in your browser's settings and try again.")),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 15000 },
+    );
+  });
+}
+
 // "Use my location" buttons (profile area, Nearby feed).
 document.addEventListener("submit", (event) => {
   const form = event.target;
   if (!form.matches("[data-locate]") || form.dataset.located) return;
   event.preventDefault();
   const error = document.querySelector("[data-locate-error]");
-  locate().then(
+  (form.dataset.locate === "precise" ? locatePrecise : locate)().then(
     ({ lat, lon }) => {
       form.elements.lat.value = lat;
       form.elements.lon.value = lon;
@@ -533,6 +545,138 @@ if (squadChat) {
       form.submit();
     }
   });
+}
+
+// ── Drops and Where It's At ──
+const metersBetween = (a, b) => {
+  const rad = (d) => (d * Math.PI) / 180;
+  const h = Math.sin(rad(b.lat - a.lat) / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lon - a.lon) / 2) ** 2;
+  return 6371000 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+};
+const heatWords = (m) =>
+  m < 120 ? "🔥 You're here!" : m < 300 ? `🔥 Hot · ${Math.round(m / 10) * 10} m` : m < 800 ? `♨️ Warmer · ${Math.round(m / 50) * 50} m` : m < 3000 ? `🌤 Getting there · ${(m / 1609.344).toFixed(1)} mi` : `🧊 Cold · ${Math.round(m / 1609.344)} mi`;
+const heatTargets = [...document.querySelectorAll("[data-radar] li[data-lat], .drop-locked[data-lat]")];
+if (heatTargets.length && navigator.geolocation) {
+  const status = document.querySelector("[data-radar-status]");
+  navigator.geolocation.watchPosition(
+    (pos) => {
+      const me = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      for (const el of heatTargets) {
+        const m = metersBetween(me, { lat: Number(el.dataset.lat), lon: Number(el.dataset.lon) });
+        const out = el.querySelector("[data-heat]");
+        if (out) out.textContent = heatWords(m);
+        el.classList.toggle("hot", m < 300);
+      }
+      if (status) status.textContent = "Hot and cold update as you move.";
+    },
+    () => status && (status.textContent = "Allow location to see hot and cold as you walk."),
+    { enableHighAccuracy: true, maximumAge: 5000 },
+  );
+}
+
+// Leaving a Drop: find the public places right here, pick one, add a photo or a note.
+const dropForm = document.querySelector("[data-drop-form]");
+if (dropForm) {
+  const status = dropForm.querySelector("[data-spot-status]");
+  const list = dropForm.querySelector("[data-spot-list]");
+  dropForm.querySelector("[data-find-spots]").addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    status.textContent = "Looking around…";
+    try {
+      const { lat, lon } = await locatePrecise();
+      dropForm.elements.lat.value = lat;
+      dropForm.elements.lon.value = lon;
+      const res = await fetch(`/drops/spots?lat=${lat}&lon=${lon}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "That didn't work.");
+      if (data.school) {
+        status.textContent = "You're near a school, so Drops can't go here.";
+        return;
+      }
+      if (!data.spots.length) {
+        status.textContent = "No public places right here. Try a park, a landmark or a café.";
+        return;
+      }
+      status.textContent = "Where are you leaving it?";
+      list.replaceChildren(
+        ...data.spots.map((s, i) => {
+          const label = document.createElement("label");
+          label.className = "spot";
+          const input = Object.assign(document.createElement("input"), { type: "radio", name: "spot", value: s.id, checked: i === 0 });
+          const text = document.createElement("span");
+          text.textContent = `${s.emoji} ${s.name}`;
+          const far = document.createElement("small");
+          far.textContent = `${s.meters} m`;
+          label.append(input, text, far);
+          return label;
+        }),
+      );
+      dropForm.querySelector("[data-drop-step]").hidden = false;
+    } catch (err) {
+      status.textContent = err.message || "That didn't work. Please try again.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+  const pick = dropForm.querySelector("input[name=photo]");
+  pick.addEventListener("change", () => {
+    const span = pick.closest("label").querySelector("span");
+    span.textContent = pick.files.length ? "📷 Photo added" : "Add a photo (optional)";
+  });
+}
+
+// Where It's At: the glowing map.
+const whereMap = document.querySelector("[data-where-map]");
+if (whereMap && window.L) {
+  const center = [Number(whereMap.dataset.lat), Number(whereMap.dataset.lon)];
+  const map = L.map(whereMap, { zoomControl: false, attributionControl: true }).setView(center, 12);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 16,
+    referrerPolicy: "strict-origin-when-cross-origin",
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+  L.control.zoom({ position: "bottomright" }).addTo(map);
+  const status = document.querySelector("[data-where-status]");
+  const listEl = document.querySelector("[data-where-list]");
+  fetch("/where/data")
+    .then((r) => r.json())
+    .then((spots) => {
+      if (!spots.length) {
+        status.textContent = "Quiet right now. When lots of people post from one place, it lights up here.";
+        return;
+      }
+      status.textContent = `${spots.length} spot${spots.length === 1 ? "" : "s"} glowing around you`;
+      const top = Math.max(...spots.map((s) => s.posts));
+      for (const s of spots) {
+        const r = 500 + 900 * (s.posts / top);
+        L.circle([s.lat, s.lon], { radius: r * 1.6, stroke: false, fillColor: "#f9a53c", fillOpacity: 0.18 }).addTo(map);
+        L.circle([s.lat, s.lon], { radius: r, stroke: false, fillColor: "#e8590c", fillOpacity: 0.35 }).addTo(map);
+      }
+      listEl.replaceChildren(
+        ...spots.map((s) => {
+          const card = document.createElement("section");
+          card.className = "card where-spot";
+          const title = document.createElement("p");
+          title.innerHTML = `<strong>🔥 ${s.posts} posts · ${s.people} people</strong>`;
+          const town = document.createElement("span");
+          town.className = "muted small";
+          town.textContent = s.town ? ` around ${s.town}` : "";
+          title.append(town);
+          const strip = document.createElement("div");
+          strip.className = "where-thumbs";
+          for (const x of s.shown) {
+            const a = Object.assign(document.createElement("a"), { href: x.href });
+            a.append(Object.assign(document.createElement("img"), { src: x.thumb, alt: "", loading: "lazy" }));
+            strip.append(a);
+          }
+          card.append(title, strip);
+          card.addEventListener("click", (e) => e.target.tagName !== "IMG" && map.flyTo([s.lat, s.lon], 14));
+          return card;
+        }),
+      );
+    })
+    .catch(() => (status.textContent = "Couldn't load the map. Please try again."));
 }
 
 // Finding people: results update as you type.
