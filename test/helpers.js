@@ -22,6 +22,18 @@ const SITE_URL = "https://social.example.test";
 const SECRET = "test-secret-that-is-long-enough-0123456789";
 const quiet = { log: () => {}, error: () => {}, warn: () => {} };
 
+// Pretend photo screening: pure red photos are "explicit" (refused), pure
+// blue ones "violent" (held for review), everything else is fine.
+const testScreener = {
+  async screen(image) {
+    const { channels } = await sharp(image).stats();
+    const [r, g, b] = channels.map((c) => c.mean);
+    if (r > 200 && g < 60 && b < 60) return { action: "refuse", labels: [{ name: "Explicit Nudity", parent: "", confidence: 99 }] };
+    if (b > 200 && r < 60 && g < 60) return { action: "hold", labels: [{ name: "Graphic Violence", parent: "Violence", confidence: 88 }] };
+    return { action: "allow", labels: [] };
+  },
+};
+
 // A few real towns, so the tests don't load all 135,000.
 const TOWNS = [
   { name: "Springfield", adminCode: "MO", country: "US", population: 166810, loc: { coordinates: [-93.29824, 37.21533] } },
@@ -47,6 +59,7 @@ async function startApp() {
     admins: [OWNER],
     secret: SECRET,
     siteUrl: SITE_URL,
+    screener: testScreener,
     log: quiet,
   });
   const server = http.createServer(handler);
@@ -131,8 +144,8 @@ async function join(app, email, username, extra = {}) {
 }
 
 /** A photo with GPS data in it, like a phone's. */
-function phonePhoto({ width = 2000, height = 1500 } = {}) {
-  return sharp({ create: { width, height, channels: 3, background: "#4a7" } })
+function phonePhoto({ width = 2000, height = 1500, color = "#4a7" } = {}) {
+  return sharp({ create: { width, height, channels: 3, background: color } })
     .jpeg()
     .withMetadata({ exif: { IFD3: { GPSLatitudeRef: "N", GPSLatitude: "37/1 12/1 55/1" } } })
     .toBuffer();

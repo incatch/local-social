@@ -128,7 +128,10 @@ test("snaps open once, then the photo is deleted", async () => {
   const view = await alex.post(`${chat}/snaps/${snap.id}`);
   assert.equal(view.status, 200);
   assert.match(view.body, /<img src="data:image\/webp;base64,/);
-  assert.equal(fs.existsSync(path.join(app.mediaDir, snap.photo_key)), false, "deleted once shown");
+  // Kept for an hour so it can be reported, then deleted.
+  assert.ok(fs.existsSync(path.join(app.mediaDir, snap.photo_key)));
+  for (const key of await app.store.purgeSnapWindows(new Date(Date.now() + 61 * 60 * 1000))) await app.media.remove(key);
+  assert.equal(fs.existsSync(path.join(app.mediaDir, snap.photo_key)), false, "deleted after the hour");
 
   // Opening it again doesn't work.
   await alex.get(chat);

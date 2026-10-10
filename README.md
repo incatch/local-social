@@ -27,10 +27,20 @@ ever is. Live at https://social.plopza.com (invite-only beta).
    without reloading. Activity page for likes, comments, follows and
    @mentions, with badges on the bottom bar. The app icon and "Add to Home
    Screen" support.
-4. **Safety**: report and block, automatic photo screening, the admin
-   moderation queue, and the moderated-out store (labelled, for training a
-   moderation model later; anything involving minors goes to legal hold, never
-   training).
+4. **Safety** (done): report posts, comments, messages, snaps and people
+   (private; posts reported by 3 people, or once for anything involving a
+   minor, are hidden until reviewed); block (no profiles, posts, comments or
+   messages either way); every photo screened by Amazon Rekognition before
+   anyone sees it (explicit: refused; borderline: held for review); the
+   Admin → Moderation queue (keep, remove, ban, legal hold) with email
+   alerts; Admin → Removed, the moderated-out store (labels, report reasons
+   and decisions, for training a moderation model later). Anything involving
+   a minor goes to legal hold: locked away, never shown or used for
+   training, account banned, and the owner reports it to NCMEC.
+
+   **Before opening to the public:** add an abuse-image hash check (e.g.
+   Microsoft PhotoDNA or Thorn Safer, which need an application) and have a
+   lawyer review the terms, privacy policy and NCMEC reporting process.
 
 ## Privacy rules the code keeps
 
