@@ -88,6 +88,7 @@ async function startApp() {
     store,
     base,
     emails,
+    runNudges: () => handler.runNudges(),
     media,
     mediaDir,
     browser: () => browser(base),

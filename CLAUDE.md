@@ -33,4 +33,6 @@
   sharing, daily habit) and make Radius venture-capital worthy. No
   monetization features for now. Think like a product designer: small
   touches that make a big difference.
-
+- Emails to members (`lib/nudges.js`) must stay gentle: never say what a
+  message says, respect `users.email_nudges` and the owner's switch, and
+  always include the one-tap "turn them off" link.

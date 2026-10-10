@@ -62,6 +62,13 @@ async function main(env = process.env) {
   setInterval(purge, 10 * 60 * 1000).unref();
   purge();
 
+  // Email nudges (waiting messages, "what's new around you"): every 10 minutes.
+  // Each person is claimed in the database first, so several containers never
+  // send the same email.
+  const nudge = () => handler.runNudges().catch((err) => console.error("email nudges failed", err));
+  setInterval(nudge, 10 * 60 * 1000).unref();
+  setTimeout(nudge, 60 * 1000).unref();
+
   // Let Fargate stop the container cleanly during deploys.
   process.on("SIGTERM", () => server.close(() => pool.end().then(() => process.exit(0))));
 }
