@@ -379,3 +379,174 @@ document.addEventListener("submit", async (event) => {
     form.submit();
   }
 });
+
+// Visiting another town: suggestions as you type.
+const townSearch = document.querySelector("[data-town-search]");
+if (townSearch) {
+  let timer;
+  townSearch.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      if (townSearch.value.trim().length < 2) return;
+      try {
+        const res = await fetch(`/places/search?q=${encodeURIComponent(townSearch.value)}`, { headers: { accept: "application/json" } });
+        const towns = await res.json();
+        const list = document.getElementById("town-list");
+        list.replaceChildren(...towns.map((t) => Object.assign(document.createElement("option"), { value: t })));
+      } catch {
+        // Typing still works without suggestions.
+      }
+    }, 180);
+  });
+  // Picking a suggestion goes straight there.
+  townSearch.addEventListener("change", () => {
+    if ([...document.querySelectorAll("#town-list option")].some((o) => o.value === townSearch.value)) townSearch.form.submit();
+  });
+}
+
+// ── Shareable pictures (the daily recap, invite cards), drawn on the phone ──
+const loadImage = (src) =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+/** Draws `img` to fill the box (cropping the middle), with rounded corners. */
+function cover(ctx, img, x, y, w, h, r = 36) {
+  const scale = Math.max(w / img.width, h / img.height);
+  const sw = w / scale;
+  const sh = h / scale;
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+  ctx.clip();
+  ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+  ctx.restore();
+}
+function rings(ctx, cx, cy, s) {
+  ctx.lineWidth = s * 0.06;
+  ctx.strokeStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.5, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = "rgba(255,255,255,.6)";
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.3, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#f9a53c";
+  ctx.beginPath();
+  ctx.arc(cx + s * 0.38, cy - s * 0.33, s * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+}
+function background(ctx, w, h) {
+  const g = ctx.createLinearGradient(0, 0, w, h);
+  g.addColorStop(0, "#5b5fe0");
+  g.addColorStop(1, "#1c1b33");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+}
+async function drawCard(spec) {
+  await document.fonts.ready;
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext("2d");
+  background(ctx, 1080, 1920);
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#ffffff";
+  if (spec.kind === "recap") {
+    ctx.font = "800 84px Jakarta, sans-serif";
+    ctx.fillText(spec.title, 540, 210);
+    ctx.font = "600 44px Jakarta, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.75)";
+    ctx.fillText(spec.date, 540, 280);
+    const imgs = (await Promise.allSettled(spec.photos.map(loadImage))).filter((r) => r.status === "fulfilled").map((r) => r.value);
+    // A collage: one big photo on top, the rest in a grid below.
+    const gap = 20;
+    if (imgs[0]) cover(ctx, imgs[0], 60, 340, 960, 760);
+    const rest = imgs.slice(1, 5);
+    const cols = rest.length > 2 ? 2 : rest.length;
+    rest.forEach((img, i) => {
+      const w = (960 - gap * (cols - 1)) / cols;
+      const rowH = rest.length > 2 ? 270 : 560;
+      cover(ctx, img, 60 + (i % cols) * (w + gap), 1100 + gap + Math.floor(i / cols) * (rowH + gap), w, rowH);
+    });
+  } else {
+    rings(ctx, 540, 380, 220);
+    ctx.font = "600 52px Jakarta, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.8)";
+    ctx.fillText(`${spec.name} invited you to`, 540, 620);
+    ctx.font = "800 150px Jakarta, sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(spec.site, 540, 780);
+    ctx.font = "700 52px Jakarta, sans-serif";
+    ctx.fillText(`${spec.town}${spec.people > 1 ? ` · ${spec.people} people nearby` : ""}`, 540, 880);
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.roundRect(290, 970, 500, 500, 40);
+    ctx.fill();
+    const qr = await loadImage(spec.qr);
+    ctx.drawImage(qr, 320, 1000, 440, 440);
+    ctx.font = "600 44px Jakarta, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.85)";
+    ctx.fillText(spec.tagline, 540, 1580);
+    ctx.font = "500 36px Jakarta, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.fillText(spec.link.replace(/^https?:\/\//, ""), 540, 1650);
+  }
+  // The mark at the bottom.
+  rings(ctx, 470, 1820, 60);
+  ctx.textAlign = "left";
+  ctx.font = "800 52px Jakarta, sans-serif";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(spec.site, 515, 1838);
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+}
+function shareStatus(text) {
+  const el = document.querySelector("[data-share-status]");
+  if (el) {
+    el.textContent = text;
+    el.hidden = !text;
+  }
+}
+document.addEventListener("click", async (event) => {
+  const cardButton = event.target.closest("[data-share-card]");
+  const linkButton = event.target.closest("[data-share-link]");
+  if (cardButton) {
+    cardButton.disabled = true;
+    shareStatus("Making your picture…");
+    try {
+      const spec = JSON.parse(cardButton.dataset.shareCard);
+      const blob = await drawCard(spec);
+      const file = new File([blob], spec.kind === "recap" ? "today.png" : "invite.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: spec.title || spec.site });
+        shareStatus("");
+      } else {
+        // No sharing here (a computer): save it instead.
+        const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: file.name });
+        a.click();
+        shareStatus("Saved. Post it anywhere!");
+      }
+    } catch (err) {
+      shareStatus(err && err.name === "AbortError" ? "" : "Couldn't make the picture. Please try again.");
+    }
+    cardButton.disabled = false;
+  } else if (linkButton) {
+    const url = linkButton.dataset.shareLink;
+    try {
+      if (navigator.share) await navigator.share({ text: linkButton.dataset.shareText, url });
+      else {
+        await navigator.clipboard.writeText(url);
+        shareStatus("Link copied. Paste it anywhere!");
+      }
+    } catch {
+      // Closed the share sheet.
+    }
+  }
+});

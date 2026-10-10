@@ -81,6 +81,18 @@ slim "Around you" bar on Nearby, a small row on the + page, and the Around
 you page. No politics; reportable; blocks and teen mode apply. On/off in
 Admin → Nearby rules.
 
+## Growth
+
+- **Visit another town**: tap the town chip on Nearby: update to where you
+  are, tap a nearby town to peek at, or type any town (suggestions as you
+  type). Read-only, with a "Back home" banner.
+- **Today in <town>**: each evening (5pm+, with 3+ local photos) a card on
+  Nearby opens a recap; "Share" draws a 1080×1920 story picture on the phone
+  (with the Radius mark) and opens the phone's share sheet.
+- **Invite cards**: every member has one at /invite (QR code, "Sam invited
+  you to Radius · Springfield · 31 people nearby"), shared as a link or a
+  picture; each brings in up to 5 people (Admin → Nearby rules; 0 = off).
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC
