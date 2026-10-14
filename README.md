@@ -96,7 +96,7 @@ Admin → Nearby rules.
 ## Local badges
 
 Earned by being real and out in town, never by follower counts: 🌱 Founding
-member (first 100), 📍 Local (5 "Taken here" photos), ⭐ Regular (7 days in a
+member (the first 500, a setting), 📍 Local (5 "Taken here" photos), ⭐ Regular (7 days in a
 month), 🌅 Early bird, 🌙 Night owl, 🧭 Explorer (5 towns), 🎉 In the moment
 (3 Moments), 🤝 Good neighbor (3 thanked answers), 🔥 Organizer (a plan 3
 people join), 🌊 Ripple maker. Shown on profiles; /badges explains them;
@@ -193,6 +193,22 @@ with `featureOn(settings, key, user)` wherever one shows up.
   A reel only uses posts that person may see. Share sends the video file
   straight to the phone's share sheet; Save downloads it.
 - The site now runs on 0.5 vCPU / 2 GB to make room for video.
+
+## Founding members (the first 500)
+
+For the launch ad campaign in Springfield. Admin → Overview → Founding
+members: switch on "let people join without an invite" and anyone can
+join until 500 people have (the number and the town's name are
+settings). The front page counts down the spots left; each new member
+sees "You're founding member #37 of 500"; the first 500 get the 🌱
+Founding member badge. When the spots are full it goes back to invite
+only by itself and the front page (and the join page) offer a waitlist;
+Admin → Invites lists it with a "Send invite" button that emails a
+one-time invite.
+
+Ads: link to `/?utm_source=instagram&utm_campaign=springfield` (any
+words). The site remembers where each person first came from (30 days)
+and Admin → Beta shows members per ad.
 
 ## Real photos on Nearby
 
