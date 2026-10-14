@@ -39,3 +39,6 @@
 - Phone notifications (`lib/push.js`) never include what a message says.
 - New features are switched per audience (Off / 18+ only / Everyone) in
   Admin → New features: gate them with `featureOn` from `lib/features.js`.
+
+- Video clips are always made silent and every second is screened; Moment
+  Reels only use Radius's own beats (`lib/beats.js`), never outside music.

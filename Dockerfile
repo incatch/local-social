@@ -4,6 +4,10 @@ FROM public.ecr.aws/docker/library/node:22-alpine
 
 WORKDIR /app
 
+# ffmpeg for video clips and Moment Reels; a font for the reels' title cards.
+RUN apk add --no-cache ffmpeg font-dejavu fontconfig
+ENV FFMPEG_PATH=/usr/bin/ffmpeg
+
 # Amazon's certificates for the database in us-east-2, so the site can check
 # it is really talking to our database (connections are encrypted).
 ADD --chmod=644 https://truststore.pki.rds.amazonaws.com/us-east-2/us-east-2-bundle.pem ./rds-ca.pem

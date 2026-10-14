@@ -72,6 +72,21 @@ async function main(env = process.env) {
   setInterval(nudge, 10 * 60 * 1000).unref();
   setTimeout(nudge, 60 * 1000).unref();
 
+  // Moment Reels: every 5 minutes, make reels for Moments that have ended
+  // (one at a time; a reel takes a minute or two).
+  let reeling = false;
+  setInterval(async () => {
+    if (reeling) return;
+    reeling = true;
+    try {
+      await handler.runReels();
+    } catch (err) {
+      console.error("moment reels failed", err);
+    } finally {
+      reeling = false;
+    }
+  }, 5 * 60 * 1000).unref();
+
   // Phone notifications: send anything new every 5 seconds (each is claimed
   // in the database first, so it's sent once).
   let pushing = false;
