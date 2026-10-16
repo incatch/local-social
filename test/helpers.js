@@ -64,6 +64,8 @@ async function startApp() {
   await migrate(pool, { log: () => {} });
   const store = createStore(pool);
   const emails = [];
+  const pushes = [];
+  const deadEndpoints = new Set();
   const mediaDir = fs.mkdtempSync(path.join(os.tmpdir(), "social-media-"));
   const media = createDirStore(mediaDir);
   const handler = createApp({
@@ -78,6 +80,11 @@ async function startApp() {
     siteUrl: SITE_URL,
     screener: testScreener,
     fetch: testFetch,
+    // Phone notifications: kept here for tests to look at. Endpoints in deadEndpoints act like a phone that uninstalled the app.
+    pushSender: async (sub, payload) => {
+      if (deadEndpoints.has(sub.endpoint)) throw Object.assign(new Error("gone"), { statusCode: 410 });
+      pushes.push({ endpoint: sub.endpoint, ...JSON.parse(payload) });
+    },
     log: quiet,
   });
   const server = http.createServer(handler);
@@ -89,6 +96,9 @@ async function startApp() {
     base,
     emails,
     runNudges: () => handler.runNudges(),
+    runPush: () => handler.runPush(),
+    pushes,
+    deadEndpoints,
     media,
     mediaDir,
     browser: () => browser(base),

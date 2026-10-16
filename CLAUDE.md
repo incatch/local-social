@@ -36,3 +36,6 @@
 - Emails to members (`lib/nudges.js`) must stay gentle: never say what a
   message says, respect `users.email_nudges` and the owner's switch, and
   always include the one-tap "turn them off" link.
+- Phone notifications (`lib/push.js`) never include what a message says.
+- New features are switched per audience (Off / 18+ only / Everyone) in
+  Admin → New features: gate them with `featureOn` from `lib/features.js`.

@@ -69,6 +69,21 @@ async function main(env = process.env) {
   setInterval(nudge, 10 * 60 * 1000).unref();
   setTimeout(nudge, 60 * 1000).unref();
 
+  // Phone notifications: send anything new every 5 seconds (each is claimed
+  // in the database first, so it's sent once).
+  let pushing = false;
+  setInterval(async () => {
+    if (pushing) return;
+    pushing = true;
+    try {
+      await handler.runPush();
+    } catch (err) {
+      console.error("phone notifications failed", err);
+    } finally {
+      pushing = false;
+    }
+  }, 5000).unref();
+
   // Let Fargate stop the container cleanly during deploys.
   process.on("SIGTERM", () => server.close(() => pool.end().then(() => process.exit(0))));
 }
