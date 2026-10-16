@@ -42,8 +42,25 @@ const testScreener = {
     return { text: "", people: [] };
   },
 };
+// Pretend OpenStreetMap (Overpass): a park and a café in downtown Springfield,
+// and a school near 37.1900,-93.2800. Calls are counted (they should be cached).
+const OVERPASS_PLACES = [
+  { type: "way", id: 1, center: { lat: 37.2089, lon: -93.2925 }, tags: { leisure: "park", name: "Park Central Square" } },
+  { type: "node", id: 2, lat: 37.2093, lon: -93.2919, tags: { amenity: "cafe", name: "Classic Rock Coffee" } },
+  { type: "node", id: 3, lat: 37.2095, lon: -93.2921, tags: { amenity: "bar", name: "Not a place for Drops" } },
+  { type: "way", id: 4, center: { lat: 37.1901, lon: -93.2801 }, tags: { amenity: "school", name: "Pretend Middle School" } },
+  { type: "node", id: 5, lat: 37.1903, lon: -93.2803, tags: { leisure: "playground", name: "School Playground" } },
+];
+const overpassCalls = { n: 0 };
 // Pretend Wikidata: Q999001 is a politician, anyone else isn't.
-const testFetch = async (url) => ({
+const testFetch = async (url) => {
+  if (String(url).includes("overpass")) {
+    overpassCalls.n += 1;
+    return { ok: true, json: async () => ({ elements: OVERPASS_PLACES }) };
+  }
+  return wikidata(url);
+};
+const wikidata = async (url) => ({
   ok: true,
   json: async () => {
     const id = url.match(/(Q\d+)\.json/)[1];
@@ -99,6 +116,7 @@ async function startApp() {
     runPush: () => handler.runPush(),
     pushes,
     deadEndpoints,
+    overpassCalls,
     media,
     mediaDir,
     browser: () => browser(base),

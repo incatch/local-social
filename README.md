@@ -160,6 +160,23 @@ with `featureOn(settings, key, user)` wherever one shows up.
   grows, and on the weekend if it's about to end. Rules in
   `lib/irl-store.js`.
 
+## Drops and Where It's At
+
+- **Drops** (`/drops`, a chip on Nearby): leave a photo or a note at a
+  public place you're at. The page looks up public places within ~150 m
+  from OpenStreetMap's free Overpass service (`lib/public-places.js`,
+  remembered 30 days): parks, landmarks, murals, cafés, shops; never bars,
+  and never within 250 m of a school. The Drop is saved at the place's own
+  map position (never where the person stood). Others see a list with
+  hot-and-cold distances as they walk, and can only open it from within
+  ~200 m (the phone's exact position is checked once and never stored).
+  The person who left it hears "someone found your Drop", never who.
+  "Found it" stamps; up to 5 live Drops each, for 30 days.
+- **Where It's At** (`/where`): a map (Leaflet + OpenStreetMap tiles) that
+  glows where at least 3 different adults (Admin → New features) posted
+  in the last 3 hours, always at least 30 minutes behind, on the
+  mile-wide rounded spots. Teens' posts never count.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC
