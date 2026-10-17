@@ -543,3 +543,14 @@ ul.drop-list li.found a { opacity: 0.7; }
 .reel video { width: 100%; max-height: 70vh; border-radius: 16px; background: #000; display: block; margin: 6px 0 10px; aspect-ratio: 9 / 16; object-fit: contain; }
 .reel-buttons { gap: 8px; }
 .reel-buttons > * { flex: 1; }
+
+/* ── Founding members ── */
+.founding-pill { display: inline-block; background: var(--accent-soft); color: #b5620a; font-weight: 800; font-size: 13px; padding: 6px 12px; border-radius: 999px; margin: 0 0 10px; }
+.founding-count { display: flex; flex-direction: column; align-items: center; margin: 18px 0 8px; }
+.founding-count b { font-size: 56px; line-height: 1; color: var(--brand); letter-spacing: -2px; }
+.founding-count span { color: var(--muted); font-weight: 600; }
+.meter { height: 10px; background: #e9e8f4; border-radius: 999px; overflow: hidden; margin: 6px 0 16px; }
+.meter span { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), var(--accent)); border-radius: 999px; }
+.waitlist { text-align: left; margin-top: 18px; }
+.waitlist form { gap: 8px; }
+.waitlist input { flex: 1; margin: 0; }

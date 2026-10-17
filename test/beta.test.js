@@ -189,7 +189,8 @@ test("Admin → Beta: who's here, the last 14 days, busiest towns", async () => 
   assert.match(body, /<b>3<\/b><span>members/);
   assert.match(body, /<b>3<\/b><span>here today/);
   assert.match(body, /Springfield, MO/);
-  assert.equal((body.match(/<tr><td>/g) || []).length, 14 + 1, "14 days and one town");
+  const days = body.slice(body.indexOf("The last 14 days"), body.indexOf("Where members came from"));
+  assert.equal((days.match(/<tr><td>/g) || []).length, 14, "14 days");
   // Messages are counted when sent (they disappear later).
   assert.match(body, /<td>[A-Z][a-z]{2}, [A-Z][a-z]{2} \d+<\/td><td>3<\/td><td>2<\/td><td>1<\/td><td>0<\/td><td>1<\/td>/, "jo's join date was moved back 10 days");
   assert.match(admin.last.body, /href="\/admin\/beta">Beta<\/a>/);
