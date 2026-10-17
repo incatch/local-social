@@ -29,6 +29,8 @@ jobs:
         run: npm test
         env:
           DATABASE_URL: postgres://postgres:test@127.0.0.1:5432/social_test
+      - name: Download the site's base image (with fallbacks)
+        run: .github/scripts/fetch-base-image.sh
       - name: Build the site's container
         run: docker build -t local-social .
 

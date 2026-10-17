@@ -54,5 +54,9 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/social-github-deploy
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Download the site's base image (with fallbacks)
+        working-directory: .
+        run: .github/scripts/fetch-base-image.sh
+
       - name: Deploy to AWS
         run: npx cdk deploy --all --require-approval never --progress events
