@@ -177,6 +177,23 @@ with `featureOn(settings, key, user)` wherever one shows up.
   in the last 3 hours, always at least 30 minutes behind, on the
   mile-wide rounded spots. Teens' posts never count.
 
+## Video clips and Moment Reels
+
+- **Clips** (`lib/video.js`, needs ffmpeg: installed in the container, and
+  `ffmpeg-static` for tests): posts can mix photos and short clips. Each
+  clip is cut to 15 seconds, made silent (no music rights, no overheard
+  voices), shrunk to 720p, stripped of hidden data, and every second of it
+  goes through photo screening. Phones play them on a loop in the feed.
+- **Moment Reels** (`lib/reels.js`, `lib/beats.js`): a ~15–20 second
+  vertical video of a Moment: a title card, each photo with a slow zoom or
+  clip, and a "made with Radius" end card, cut to a beat Radius makes
+  itself (three moods; each Moment always gets the same one). Anyone can
+  tap "Make the Moment Reel"; and when a Moment ends (45 minutes after its
+  last post), everyone who posted in it gets theirs and a notification.
+  A reel only uses posts that person may see. Share sends the video file
+  straight to the phone's share sheet; Save downloads it.
+- The site now runs on 0.5 vCPU / 2 GB to make room for video.
+
 ## Real photos on Nearby
 
 Photos that say they were made with AI (content credentials / IPTC

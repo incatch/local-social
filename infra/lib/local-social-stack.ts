@@ -150,8 +150,8 @@ export class LocalSocialStack extends cdk.Stack {
     const emailFrom = `social@${props.domainName}`;
     const task = new ecs.FargateTaskDefinition(this, "WebTask", {
       family: "local-social-web",
-      cpu: 256, // 0.25 vCPU
-      memoryLimitMiB: 1024, // room to resize big phone photos
+      cpu: 512, // 0.5 vCPU: video clips and Moment Reels are made here
+      memoryLimitMiB: 2048, // room for big phone photos and video
       runtimePlatform: {
         cpuArchitecture: ecs.CpuArchitecture.X86_64,
         operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,

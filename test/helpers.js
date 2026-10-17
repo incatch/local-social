@@ -114,6 +114,7 @@ async function startApp() {
     emails,
     runNudges: () => handler.runNudges(),
     runPush: () => handler.runPush(),
+    runReels: () => handler.runReels(),
     pushes,
     deadEndpoints,
     overpassCalls,

@@ -113,9 +113,11 @@ if (newPost) {
       ...chosen.map((file, i) => {
         const tile = document.createElement("div");
         tile.className = "tile";
-        const img = document.createElement("img");
+        const isClip = file.type.startsWith("video/");
+        const img = document.createElement(isClip ? "video" : "img");
         img.src = file.preview;
-        img.alt = `Photo ${i + 1}`;
+        if (isClip) Object.assign(img, { muted: true, loop: true, autoplay: true, playsInline: true });
+        else img.alt = `Photo ${i + 1}`;
         const remove = document.createElement("button");
         remove.type = "button";
         remove.setAttribute("aria-label", `Remove photo ${i + 1}`);
@@ -142,11 +144,16 @@ if (newPost) {
   input.addEventListener("change", () => {
     const room = MAX - chosen.length;
     const picked = [...input.files];
+    let tooBig = false;
     for (const file of picked.slice(0, room)) {
+      if (file.type.startsWith("video/") && file.size > 80 * 1024 * 1024) {
+        tooBig = true;
+        continue;
+      }
       file.preview = URL.createObjectURL(file);
       chosen.push(file);
     }
-    say(picked.length > room ? `Up to ${MAX} photos per post, so only the first ${room} were added.` : "");
+    say(tooBig ? "That clip is too big. Try a shorter one (up to 15 seconds)." : picked.length > room ? `Up to ${MAX} photos per post, so only the first ${room} were added.` : "");
     input.value = "";
     show();
   });
@@ -170,6 +177,11 @@ if (newPost) {
         }
       }
       for (const [i, file] of chosen.entries()) {
+        if (file.type.startsWith("video/")) {
+          // Clips go as they are; the server makes them small and silent.
+          data.append("photos", file, `clip${i + 1}.${(file.name.split(".").pop() || "mp4").slice(0, 4)}`);
+          continue;
+        }
         say(`Preparing photo ${i + 1} of ${chosen.length}…`);
         let blob = file;
         try {
@@ -183,7 +195,7 @@ if (newPost) {
         // too; the server reads those and throws them away.
         if (blob !== file) data.append(`head${i}`, file.slice(0, 512 * 1024), `head${i}`);
       }
-      say("Sharing…");
+      say(chosen.some((f) => f.type.startsWith("video/")) ? "Sharing… (clips take a little longer)" : "Sharing…");
       const res = await fetch(newPost.action, { method: "POST", body: data, headers: { accept: "application/json" } });
       const out = await res.json().catch(() => ({ error: "Something went wrong. Please try again." }));
       if (!res.ok) throw new Error(out.error);
@@ -677,6 +689,46 @@ if (whereMap && window.L) {
       );
     })
     .catch(() => (status.textContent = "Couldn't load the map. Please try again."));
+}
+
+// Moment Reels: share the video itself (or save it), and wait for one being made.
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-share-video]");
+  if (!button) return;
+  const status = button.closest("section")?.querySelector("[data-share-status]");
+  button.disabled = true;
+  try {
+    const blob = await (await fetch(button.dataset.shareVideo)).blob();
+    const file = new File([blob], "moment.mp4", { type: "video/mp4" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: button.dataset.shareTitle });
+    } else {
+      const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "moment.mp4" });
+      a.click();
+      if (status) {
+        status.textContent = "Saved. Post it to your story from your phone's videos.";
+        status.hidden = false;
+      }
+    }
+  } catch {
+    // Closing the share sheet is fine.
+  } finally {
+    button.disabled = false;
+  }
+});
+const reelWait = document.querySelector("[data-reel-wait]");
+if (reelWait) {
+  const timer = setInterval(async () => {
+    try {
+      const { status } = await (await fetch(reelWait.dataset.reelWait)).json();
+      if (status === "ready" || status === "failed") {
+        clearInterval(timer);
+        location.reload();
+      }
+    } catch {
+      // Try again.
+    }
+  }, 5000);
 }
 
 // Finding people: results update as you type.
